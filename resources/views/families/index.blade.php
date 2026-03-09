@@ -46,7 +46,7 @@
                                         </div>
                                         <input name="search" type="text" id="search"
                                             class="block w-full p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                            placeholder="Cari apa nich" required />
+                                            placeholder="Pencarian" required />
                                     </div>
                                 </form>
                             </div>
@@ -98,6 +98,19 @@
                                         </li>
                                     </ul>
                                 </div>
+                                @if (in_array(Auth::user()->role, ['supervisor', 'admin']))
+                                    <button onclick="window.location.href='{{ route('families.export') }}'" type="button"
+                                        class="flex items-center justify-end rounded-lg border border-primary-200 bg-green-700 px-3 py-2 text-sm font-medium text-white hover:bg-primary-800 hover:text-gray-50 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700">
+                                        Download
+                                        <svg class="animate-bounce h-4 w-4" aria-hidden="true"
+                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            fill="none" viewBox="0 0 24 24">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M12 13V4M7 14H5a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1h-2m-1-5-4 5-4-5m9 8h.01" />
+                                        </svg>
+                                    </button>
+                                @endif
                                 <button onclick="window.location.href='{{ route('family.create') }}'" type="button"
                                     class="flex items-center justify-end rounded-lg border border-primary-200 bg-primary-700 px-3 py-2 text-sm font-medium text-white hover:bg-primary-800 hover:text-gray-50 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700">
                                     Tagging
@@ -153,6 +166,20 @@
                                                         <div
                                                             class="table-cell text-left text-sm font-medium text-gray-900 dark:text-white pr-2">
                                                             <div class="mb-2">
+                                                                Kelurahan
+                                                            </div>
+                                                        </div>
+                                                        <div
+                                                            class="table-cell text-left text-sm font-medium text-gray-900 dark:text-white pr-2">
+                                                            :</div>
+                                                        <div
+                                                            class="table-cell text-left text-sm font-medium text-gray-500 dark:text-gray-400">
+                                                            {{ $family->kelurahan->nama ?? '-' }}</div>
+                                                    </div>
+                                                    <div class="table-row">
+                                                        <div
+                                                            class="table-cell text-left text-sm font-medium text-gray-900 dark:text-white pr-2">
+                                                            <div class="mb-2">
                                                                 RT
                                                             </div>
                                                         </div>
@@ -161,7 +188,8 @@
                                                             :</div>
                                                         <div
                                                             class="table-cell text-left text-sm font-medium text-gray-500 dark:text-gray-400">
-                                                            {{ $family->rt_address }}</div>
+                                                            RT {{ $family->rtRw->rt ?? '-' }} RW
+                                                            {{ $family->rtRw->rw ?? '-' }}</div>
                                                     </div>
                                                 </div>
                                                 <div class="table-row-group">
@@ -375,7 +403,8 @@
                                                                             stroke-linejoin="round" stroke-width="2"
                                                                             d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                                                     </svg>
-                                                                    {{ $family->latitude }}, {{ $family->longitude }}
+                                                                    {{ number_format($family->latitude, 6) }},
+                                                                    {{ number_format($family->longitude, 6) }}
                                                                 </a>
                                                             </div>
                                                         </div>
@@ -577,7 +606,7 @@
             document.addEventListener('DOMContentLoaded', function() {
                 // Inisialisasi data untuk pagination
                 let currentPage = 1;
-                const itemsPerPage = 10; // Jumlah item per halaman
+                const itemsPerPage = 9; // Jumlah item per halaman
                 const shopItems = document.querySelectorAll('.family-item');
                 const totalItems = shopItems.length; // Total jumlah item yang ada
                 const totalPages = Math.max(1, Math.ceil(totalItems /

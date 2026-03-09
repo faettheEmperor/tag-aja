@@ -9,20 +9,38 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use App\Models\RtRw;
+use App\Models\Kelurahan;
 
 
 class FamilyController extends Controller
 {
     public function index()
     {
-        return view('families.index', [
-            'families' => Family::with('members', 'creator')->get(), // Eager loading members
-        ]);
+        $user = Auth::user();
+
+        // BUAT QUERY
+        $query = Family::with(['kelurahan', 'rtRw', 'members', 'creator']);
+
+        // TERAPKAN FILTER BERDASARKAN ROLE
+        if ($user->role === 'petugas') {
+            $query->where('created_by', $user->id);
+        } elseif ($user->role === 'supervisor') {
+            $query->where('kelurahan_id', $user->kelurahan_id);
+        }
+        // admin: tanpa filter (semua data)
+
+        // EKSEKUSI QUERY
+        $families = $query->get();
+
+        // KIRIM KE VIEW
+        return view('families.index', compact('families'));
     }
 
     public function create()
     {
-        return view('families.create');
+        $kelurahans = Kelurahan::all();
+        return view('families.create', compact('kelurahans'));
     }
 
     public function store(Request $request)
@@ -44,7 +62,8 @@ class FamilyController extends Controller
             'ownership_kk.required' => 'Kepemilikan Kartu Keluarga wajib diisi',
             'number_of_family_member.required' => 'Jumlah anggota wajib diisi',
             'number_of_family_member.numeric' => 'Jumlah anggota harus berupa angka',
-            'rt_address.required' => 'Alamat RT harus diisi',
+            'kelurahan_id.required' => 'Kelurahan/Desa harus diisi',
+            'rt_rw_id.required' => 'Alamat RT harus diisi',
             'ktp_address.required' => 'Alamat KTP harus diisi',
             'city_address.required' => 'asal Kabupaten/Kota harus diisi',
             'bpnt.required' => 'Bantuan BPNT Harus Diisi',
@@ -85,7 +104,8 @@ class FamilyController extends Controller
             'number_kk' => 'required|numeric|digits:16|unique:families,number_kk',
             'ownership_kk' => 'required',
             'number_of_family_member' => 'required|numeric',
-            'rt_address' => 'required',
+            'kelurahan_id' => 'required|exists:kelurahans,id',
+            'rt_rw_id' => 'required|exists:rt_rws,id',
             'ktp_address' => 'required',
             'city_address' => 'required',
             'latitude' => 'required',
@@ -96,6 +116,7 @@ class FamilyController extends Controller
             'blt_village' => 'required',
             'other_assistance' => 'required',
             'house_photo' => 'nullable|image|mimes:jpeg,png,jpg',
+            'temp_photo' => 'nullable|string',
 
             // MEMBERS
             'members' => 'required|array',
@@ -143,7 +164,41 @@ class FamilyController extends Controller
 
         try {
             $path = null;
-            if ($request->hasFile('house_photo')) {
+
+            // CEK TEMP PHOTO DULU
+            if ($request->has('temp_photo') && !empty($request->temp_photo)) {
+                $tempId = $request->temp_photo;
+                $files = Storage::disk('public')->files('temp');
+
+                foreach ($files as $file) {
+                    if (strpos($file, $tempId) !== false) {
+                        // Dapatkan ekstensi file
+                        $extension = pathinfo($file, PATHINFO_EXTENSION);
+
+                        // Cari nama kepala keluarga
+                        $kepalaKeluarga = '';
+                        foreach ($validated['members'] as $member) {
+                            if ($member['status_in_family'] === 'Kepala Keluarga') {
+                                $kepalaKeluarga = $member['full_name'];
+                                break;
+                            }
+                        }
+
+                        $namaBersih = Str::slug($kepalaKeluarga ?: 'keluarga', '-');
+                        $timestamp = Carbon::now()->format('Ymd-His');
+                        $namaFile = $namaBersih . '-' . $timestamp . '.' . $extension;
+
+                        // Pindahkan dari temp ke house-photos
+                        $newPath = 'house-photos/' . $namaFile;
+                        Storage::disk('public')->move($file, $newPath);
+                        $path = $newPath;
+
+                        break;
+                    }
+                }
+            }
+            // KALAU TIDAK ADA TEMP, CEK UPLOAD LANGSUNG
+            elseif ($request->hasFile('house_photo')) {
                 $file = $request->file('house_photo');
 
                 // Cari nama kepala keluarga
@@ -157,10 +212,8 @@ class FamilyController extends Controller
 
                 // Format: NamaBersih-TahunBulanTanggal-JamMenitDetik.ekstensi
                 $namaBersih = Str::slug($kepalaKeluarga ?: 'keluarga', '-');
-                $timestamp = Carbon::now()->format('Ymd-His'); // 20260226-143025
+                $timestamp = Carbon::now()->format('Ymd-His');
                 $extension = $file->getClientOriginalExtension();
-
-                // Hasil: farabi-20260226-143025.jpg
                 $namaFile = $namaBersih . '-' . $timestamp . '.' . $extension;
 
                 // Cek ukuran file
@@ -181,7 +234,7 @@ class FamilyController extends Controller
                     }
                     $compressedData = ob_get_clean();
 
-                    // Hapus image dari memory (AMAN, warning bisa diabaikan)
+                    // Hapus image dari memory
                     $image = null;
 
                     // Simpan file hasil kompres
@@ -201,7 +254,8 @@ class FamilyController extends Controller
             $newFamily->number_kk = $validated['number_kk'];
             $newFamily->ownership_kk = $validated['ownership_kk'];
             $newFamily->number_of_family_member = $validated['number_of_family_member'];
-            $newFamily->rt_address = $validated['rt_address'];
+            $newFamily->kelurahan_id = $validated['kelurahan_id'];
+            $newFamily->rt_rw_id = $validated['rt_rw_id'];
             $newFamily->ktp_address = $validated['ktp_address'];
             $newFamily->city_address = $validated['city_address'];
             $newFamily->latitude = $validated['latitude'];
@@ -259,6 +313,17 @@ class FamilyController extends Controller
                 Storage::disk('public')->delete($path);
             }
 
+            // Hapus file temp kalau ada (TAMBAHKAN INI)
+            if ($request->has('temp_photo')) {
+                $files = Storage::disk('public')->files('temp');
+                foreach ($files as $file) {
+                    if (strpos($file, $request->temp_photo) !== false) {
+                        Storage::disk('public')->delete($file);
+                        break;
+                    }
+                }
+            }
+
             return redirect()->back()
                 ->withInput()
                 ->with('error', 'Gagal menyimpan data: ' . $e->getMessage());
@@ -268,11 +333,16 @@ class FamilyController extends Controller
     public function edit($id)
     {
         $family = Family::with('members')->findOrFail($id);
-        // KONVERSI TANGGAL MEMBER DARI Y-m-d KE m/d/Y
+
+        // KONVERSI TANGGAL
         foreach ($family->members as $member) {
             $member->date_of_birth = \Carbon\Carbon::parse($member->date_of_birth)->format('m/d/Y');
         }
-        return view('families.edit', compact('family'));
+
+        // AMBIL SEMUA KELURAHAN
+        $kelurahans = Kelurahan::all();
+
+        return view('families.edit', compact('family', 'kelurahans'));
     }
 
     public function update(Request $request, $id)
@@ -293,7 +363,8 @@ class FamilyController extends Controller
             'ownership_kk.required' => 'Kepemilikan Kartu Keluarga wajib diisi',
             'number_of_family_member.required' => 'Jumlah anggota wajib diisi',
             'number_of_family_member.numeric' => 'Jumlah anggota harus berupa angka',
-            'rt_address.required' => 'Alamat RT harus diisi',
+            'kelurahan_id' => 'Kelurahan/Desa harus diisi',
+            'rt_rw_id.required' => 'Alamat RT harus diisi',
             'ktp_address.required' => 'Alamat KTP harus diisi',
             'city_address.required' => 'asal Kabupaten/Kota harus diisi',
             'bpnt.required' => 'Bantuan BPNT Harus Diisi',
@@ -334,7 +405,8 @@ class FamilyController extends Controller
             'number_kk' => 'required|numeric|digits:16|unique:families,number_kk,' . $id,
             'ownership_kk' => 'required',
             'number_of_family_member' => 'required|numeric|min:1|max:15',
-            'rt_address' => 'required',
+            'kelurahan_id' => 'required|exists:kelurahans,id',
+            'rt_rw_id' => 'required|exists:rt_rws,id',
             'ktp_address' => 'required',
             'city_address' => 'required',
             'latitude' => 'required|numeric',
@@ -452,7 +524,8 @@ class FamilyController extends Controller
             $family->number_kk = $validated['number_kk'];
             $family->ownership_kk = $validated['ownership_kk'];
             $family->number_of_family_member = $validated['number_of_family_member'];
-            $family->rt_address = $validated['rt_address'];
+            $family->kelurahan_id = $validated['kelurahan_id'];
+            $family->rt_rw_id = $validated['rt_rw_id'];
             $family->ktp_address = $validated['ktp_address'];
             $family->city_address = $validated['city_address'];
             $family->latitude = $validated['latitude'];
@@ -528,5 +601,78 @@ class FamilyController extends Controller
 
         // Mengalihkan ke halaman sebelumnya dengan pesan sukses
         return redirect()->route('family.index')->with('status', 'Keluarga berhasil dihapus!');
+    }
+    public function getRtByKelurahan($kelurahanId)
+    {
+        $rtRwList = RtRw::where('kelurahan_id', $kelurahanId)->get();
+        return response()->json($rtRwList);
+    }
+
+    public function export()
+    {
+        $user = Auth::user();
+        $query = Family::with(['kelurahan', 'rtRw', 'creator']);
+
+        if ($user->role === 'petugas') {
+            $query->where('created_by', $user->id);
+        } elseif ($user->role === 'supervisor') {
+            $query->where('kelurahan_id', $user->kelurahan_id);
+        }
+
+        $families = $query->get();
+
+        $filename = "data-keluarga-" . date('Y-m-d') . ".csv";
+        $handle = fopen('php://temp', 'w+');
+
+        // TAMBAHKAN BOM UTF-8
+        fprintf($handle, chr(0xEF) . chr(0xBB) . chr(0xBF));
+
+        // HEADER
+        fputcsv($handle, [
+            'No. KK',
+            'Kepemilikan KK',
+            'Jumlah Anggota',
+            'Kelurahan/Desa',
+            'RT/RW',
+            'Alamat KTP',
+            'Kota/Kabupaten',
+            'Latitude',
+            'Longitude',
+            'BPNT',
+            'PKH',
+            'BLT Lansia',
+            'BLT Desa',
+            'Bantuan Lain',
+            'Dibuat Oleh',
+        ], ';');
+
+        foreach ($families as $family) {
+            // PAKSA SEMUA JADI STRING DENGAN AWALAN "="
+            fputcsv($handle, [
+                '="' . $family->number_kk . '"',                    // NIK/KK biar ga ilang angka
+                '="' . $family->ownership_kk . '"',
+                '="' . $family->number_of_family_member . '"',
+                '="' . ($family->kelurahan?->nama ?? '-') . '"',
+                '="' . ($family->rtRw ? 'RT ' . $family->rtRw->rt . ' RW ' . $family->rtRw->rw : '-') . '"',
+                '="' . $family->ktp_address . '"',
+                '="' . $family->city_address . '"',
+                '="' . $family->latitude . '"',
+                '="' . $family->longitude . '"',
+                '="' . $family->bpnt . '"',
+                '="' . $family->pkh . '"',
+                '="' . $family->blt_elderly . '"',
+                '="' . $family->blt_village . '"',
+                '="' . $family->other_assistance . '"',
+                '="' . ($family->creator?->name ?? '-') . '"',
+            ], ';');
+        }
+
+        rewind($handle);
+        $content = stream_get_contents($handle);
+        fclose($handle);
+
+        return response($content)
+            ->header('Content-Type', 'text/csv; charset=UTF-8')
+            ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
     }
 }

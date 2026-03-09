@@ -40,25 +40,32 @@
                                     class="lg:w-full max-w-full sm:w-full mx-auto h-52 rounded-xl border-2 border-orange-300 mb-5">
                                 </div>
 
-                                <label for="rt_address"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">RT/RW/DUSUN<span class="text-red-500">*</span></label>
-                                <select id="rt_address" name="rt_address"
+                                <label for="kelurahan_id"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Kelurahan/Desa<span
+                                        class="text-red-500">*</span></label>
+                                <select id="kelurahan_id" name="kelurahan_id"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                    <option value="">--- Pilih Kelurahan/Desa ---</option>
+                                    @foreach ($kelurahans as $kel)
+                                        <option value="{{ $kel->id }}"
+                                            {{ $family->kelurahan_id == $kel->id ? 'selected' : '' }}>
+                                            {{ $kel->nama }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('kelurahan_id')
+                                    <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="rt_rw_id"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">RT/RW/DUSUN<span
+                                        class="text-red-500">*</span></label>
+                                <select id="rt_rw_id" name="rt_rw_id"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                                     <option value="">--- Pilih RT/RW/DUSUN ---</option>
-                                    <option value="RT 001 RW 001" {{ old('rt_address', $family->rt_address) == 'RT 001 RW 001' ? 'selected' : '' }}>RT 001 RW 001</option>
-                                    <option value="RT 002 RW 001" {{ old('rt_address', $family->rt_address) == 'RT 002 RW 001' ? 'selected' : '' }}>RT 002 RW 001</option>
-                                    <option value="RT 003 RW 001" {{ old('rt_address', $family->rt_address) == 'RT 003 RW 001' ? 'selected' : '' }}>RT 003 RW 001</option>
-                                    <option value="RT 001 RW 002" {{ old('rt_address', $family->rt_address) == 'RT 001 RW 002' ? 'selected' : '' }}>RT 001 RW 002</option>
-                                    <option value="RT 002 RW 002" {{ old('rt_address', $family->rt_address) == 'RT 002 RW 002' ? 'selected' : '' }}>RT 002 RW 002</option>
-                                    <option value="RT 001 RW 006" {{ old('rt_address', $family->rt_address) == 'RT 001 RW 006' ? 'selected' : '' }}>RT 001 RW 006</option>
-                                    <option value="RT 002 RW 006" {{ old('rt_address', $family->rt_address) == 'RT 002 RW 006' ? 'selected' : '' }}>RT 002 RW 006</option>
-                                    <option value="RT 003 RW 006" {{ old('rt_address', $family->rt_address) == 'RT 003 RW 006' ? 'selected' : '' }}>RT 003 RW 006</option>
-                                    <option value="RT 001 RW 007" {{ old('rt_address', $family->rt_address) == 'RT 001 RW 007' ? 'selected' : '' }}>RT 001 RW 007</option>
-                                    <option value="RT 002 RW 007" {{ old('rt_address', $family->rt_address) == 'RT 002 RW 007' ? 'selected' : '' }}>RT 002 RW 007</option>
-                                    <option value="RT 003 RW 007" {{ old('rt_address', $family->rt_address) == 'RT 003 RW 007' ? 'selected' : '' }}>RT 003 RW 007</option>
-                                    <option value="RT 004 RW 007" {{ old('rt_address', $family->rt_address) == 'RT 004 RW 007' ? 'selected' : '' }}>RT 004 RW 007</option>
                                 </select>
-                                @error('rt_address')
+                                @error('rt_rw_id')
                                     <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
                                 @enderror
                             </div>
@@ -68,8 +75,8 @@
                                 <label for="ktp_address"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Alamat
                                     sesuai Kartu Tanda Penduduk (KTP) <span class="text-red-500">*</span></label>
-                                <input value="{{ old('ktp_address', $family->ktp_address) }}" type="text" id="ktp_address"
-                                    name="ktp_address"
+                                <input value="{{ old('ktp_address', $family->ktp_address) }}" type="text"
+                                    id="ktp_address" name="ktp_address"
                                     class="@error('ktp_address') is-invalid @enderror block p-3 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 shadow-sm focus:ring-primary-500 focus:border-primary-500"
                                     placeholder="" required>
                                 @error('ktp_address')
@@ -83,9 +90,10 @@
                             <div class="">
                                 <label for="city_address"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Jika KTP NON
-                                    TELUK LOBAM, sebutkan asal Kota/Kabupaten <span class="text-red-500">*</span></label>
-                                <input value="{{ old('city_address', $family->city_address ) }}" type="text" id="city_address"
-                                    name="city_address"
+                                    TELUK LOBAM, sebutkan asal Kota/Kabupaten <span
+                                        class="text-red-500">*</span></label>
+                                <input value="{{ old('city_address', $family->city_address) }}" type="text"
+                                    id="city_address" name="city_address"
                                     class="@error('city_address') is-invalid @enderror block p-3 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 shadow-sm focus:ring-primary-500 focus:border-primary-500"
                                     placeholder="isikan '-' jika KTP Teluk Lobam" required>
                                 @error('city_address')
@@ -103,9 +111,12 @@
                                 <select id="ownership_kk" name="ownership_kk"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                                     <option value="">--- Pilih Status Kepemilikan ---</option>
-                                    <option value="KK" {{ old('ownership_kk', $family->ownership_kk) == 'KK' ? 'selected' : '' }}>KK
+                                    <option value="KK"
+                                        {{ old('ownership_kk', $family->ownership_kk) == 'KK' ? 'selected' : '' }}>KK
                                     </option>
-                                    <option value="Non KK" {{ old('ownership_kk', $family->ownership_kk) == 'Non KK' ? 'selected' : '' }}>Non
+                                    <option value="Non KK"
+                                        {{ old('ownership_kk', $family->ownership_kk) == 'Non KK' ? 'selected' : '' }}>
+                                        Non
                                         KK</option>
                                 </select>
                                 @error('ownership_kk')
@@ -118,7 +129,8 @@
                                 <label for="number_kk"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Nomor Kartu
                                     Keluarga <span class="text-red-500">*</span></label>
-                                <input value="{{ old('number_kk', $family->number_kk ) }}" type="text" id="number_kk" name="number_kk"
+                                <input value="{{ old('number_kk', $family->number_kk) }}" type="text" id="number_kk"
+                                    name="number_kk"
                                     class="@error('number_kk') is-invalid @enderror block p-3 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 shadow-sm focus:ring-primary-500 focus:border-primary-500"
                                     placeholder="" required>
                                 @error('number_kk')
@@ -135,7 +147,7 @@
                                     Keluarga <span class="text-red-500">*</span></label>
                                 <input type="number" id="number_of_family_member" min="1" max="15"
                                     step="1" name="number_of_family_member"
-                                    value="{{ old('number_of_family_member', $family->number_of_family_member ) }}"
+                                    value="{{ old('number_of_family_member', $family->number_of_family_member) }}"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                                     placeholder="Minimal anggota keluarga 1" required />
                                 @error('number_of_family_member')
@@ -151,8 +163,10 @@
                                 <select id="bpnt" name="bpnt"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                                     <option value="">--- Pilih Status ---</option>
-                                    <option value="Ya" {{ old('bpnt', $family->bpnt ) == 'Ya' ? 'selected' : '' }}>Ya</option>
-                                    <option value="Tidak" {{ old('bpnt', $family->bpnt) == 'Tidak' ? 'selected' : '' }}>Tidak
+                                    <option value="Ya" {{ old('bpnt', $family->bpnt) == 'Ya' ? 'selected' : '' }}>
+                                        Ya</option>
+                                    <option value="Tidak"
+                                        {{ old('bpnt', $family->bpnt) == 'Tidak' ? 'selected' : '' }}>Tidak
                                     </option>
                                 </select>
                                 @error('bpnt')
@@ -167,8 +181,10 @@
                                 <select id="pkh" name="pkh"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                                     <option value="">--- Pilih Status ---</option>
-                                    <option value="Ya" {{ old('pkh', $family->pkh ) == 'Ya' ? 'selected' : '' }}>Ya</option>
-                                    <option value="Tidak" {{ old('pkh', $family->pkh) == 'Tidak' ? 'selected' : '' }}>Tidak
+                                    <option value="Ya" {{ old('pkh', $family->pkh) == 'Ya' ? 'selected' : '' }}>
+                                        Ya</option>
+                                    <option value="Tidak"
+                                        {{ old('pkh', $family->pkh) == 'Tidak' ? 'selected' : '' }}>Tidak
                                     </option>
                                 </select>
                                 @error('pkh')
@@ -183,9 +199,12 @@
                                 <select id="blt_elderly" name="blt_elderly"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                                     <option value="">--- Pilih Status ---</option>
-                                    <option value="Ya" {{ old('blt_elderly', $family->blt_elderly) == 'Ya' ? 'selected' : '' }}>Ya
+                                    <option value="Ya"
+                                        {{ old('blt_elderly', $family->blt_elderly) == 'Ya' ? 'selected' : '' }}>Ya
                                     </option>
-                                    <option value="Tidak" {{ old('blt_elderly', $family->blt_elderly) == 'Tidak' ? 'selected' : '' }}>Tidak
+                                    <option value="Tidak"
+                                        {{ old('blt_elderly', $family->blt_elderly) == 'Tidak' ? 'selected' : '' }}>
+                                        Tidak
                                     </option>
                                 </select>
                                 @error('blt_elderly')
@@ -200,9 +219,12 @@
                                 <select id="blt_village" name="blt_village"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                                     <option value="">--- Pilih Status ---</option>
-                                    <option value="Ya" {{ old('blt_village', $family->blt_village) == 'Ya' ? 'selected' : '' }}>Ya
+                                    <option value="Ya"
+                                        {{ old('blt_village', $family->blt_village) == 'Ya' ? 'selected' : '' }}>Ya
                                     </option>
-                                    <option value="Tidak" {{ old('blt_village', $family->blt_village) == 'Tidak' ? 'selected' : '' }}>Tidak
+                                    <option value="Tidak"
+                                        {{ old('blt_village', $family->blt_village) == 'Tidak' ? 'selected' : '' }}>
+                                        Tidak
                                     </option>
                                 </select>
                                 @error('blt_village')
@@ -214,9 +236,10 @@
                             <div>
                                 <label for="other_assistance"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Apakah
-                                    menerima bantuan lainnya? Jika YA, sebutkan <span class="text-red-500">*</span></label>
-                                <input value="{{ old('other_assistance', $family->other_assistance) }}" type="text" id="other_assistance"
-                                    name="other_assistance"
+                                    menerima bantuan lainnya? Jika YA, sebutkan <span
+                                        class="text-red-500">*</span></label>
+                                <input value="{{ old('other_assistance', $family->other_assistance) }}"
+                                    type="text" id="other_assistance" name="other_assistance"
                                     class="@error('other_assistance') is-invalid @enderror block p-3 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 shadow-sm focus:ring-primary-500 focus:border-primary-500"
                                     placeholder="Tuliskan dengan lengkap" required>
                                 @error('other_assistance')
@@ -225,7 +248,26 @@
                                     </div>
                                 @enderror
                             </div>
+                            <div class="mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200" id="photo-container">
+                                <div class="flex items-start gap-4">
+                                    {{-- FOTO (AKAN KOSONG KALAU BELUM ADA) --}}
+                                    <img src="{{ $family->house_photo ? asset('storage/' . $family->house_photo) : '' }}"
+                                        class="h-24 w-24 object-cover rounded-lg border border-gray-300"
+                                        id="current-photo"
+                                        style="{{ $family->house_photo ? '' : 'display: none;' }}">
 
+                                    {{-- INFO --}}
+                                    <div class="flex-1">
+                                        <p class="text-sm font-medium text-gray-700 mb-1" id="photo-label">
+                                            {{ $family->house_photo ? 'Foto Saat Ini' : 'Belum ada foto' }}
+                                        </p>
+                                        @if (!$family->house_photo)
+                                            <p class="text-xs text-gray-500">Upload foto untuk menambahkan</p>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="photo-preview" class="mb-3"></div>
                             <div class="pb-4">
                                 <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                     for="file_input">
@@ -235,8 +277,10 @@
                                     class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none dark:bg-gray-700 dark:text-gray-400"
                                     id="house_photo" name="house_photo" type="file"
                                     accept="image/png, image/jpeg, image/jpg">
+                                <input type="hidden" name="temp_photo" id="temp_photo"
+                                    value="{{ old('temp_photo') }}">
                                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">
-                                    PNG, JPG, JPEG (MAX. 2MB).
+                                    PNG, JPG, JPEG (MAX. 5MB).
                                 </p>
                                 @error('house_photo')
                                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -268,8 +312,8 @@
         {{-- Data old members dari server --}}
         <script>
             // Data old members dari server
-            const oldMembers = @json($family->members); 
-            const oldNumber = {{ $family->number_of_family_member }}; 
+            const oldMembers = @json($family->members);
+            const oldNumber = {{ $family->number_of_family_member }};
             const container = document.getElementById('members-container');
 
             document.addEventListener('DOMContentLoaded', function() {
@@ -793,7 +837,117 @@
                 document.getElementById('longitude').value = defaultLng;
             }
         </script>
-        <script></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const kelurahanId = "{{ $family->kelurahan_id }}";
+                const rtRwId = "{{ $family->rt_rw_id }}";
+
+                if (kelurahanId) {
+                    // Load RT/RW
+                    fetch(`/get-rt-by-kelurahan/${kelurahanId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            const rtRwSelect = document.getElementById('rt_rw_id');
+                            rtRwSelect.innerHTML = '<option value="">--- Pilih RT/RW/DUSUN ---</option>';
+
+                            data.forEach(item => {
+                                const option = document.createElement('option');
+                                option.value = item.id;
+                                option.textContent = `[${item.kode_sls}] RT ${item.rt} RW ${item.rw}`;
+                                if (item.id == rtRwId) {
+                                    option.selected = true;
+                                }
+                                rtRwSelect.appendChild(option);
+                            });
+                        });
+                }
+            });
+
+            // Event listener untuk change kelurahan
+            document.getElementById('kelurahan_id').addEventListener('change', function() {
+                const kelurahanId = this.value;
+                const rtRwSelect = document.getElementById('rt_rw_id');
+
+                rtRwSelect.innerHTML = '<option value="">--- Pilih RT/RW/DUSUN ---</option>';
+
+                if (kelurahanId) {
+                    fetch(`/get-rt-by-kelurahan/${kelurahanId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            data.forEach(item => {
+                                const option = document.createElement('option');
+                                option.value = item.id;
+                                option.textContent = `[${item.kode_sls}] RT ${item.rt} RW ${item.rw}`;
+                                rtRwSelect.appendChild(option);
+                            });
+                        });
+                }
+            });
+        </script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // CEK OLD TEMP PHOTO (PAS ERROR VALIDASI)
+                @if (old('temp_photo'))
+                    const filename = "{{ old('temp_photo') }}";
+                    const imageUrl = `/storage/temp/${filename}`;
+
+                    // ISI HIDDEN INPUT
+                    document.getElementById('temp_photo').value = filename;
+
+                    // GANTI FOTO LAMA DENGAN PREVIEW
+                    const currentPhoto = document.getElementById('current-photo');
+                    const photoLabel = document.getElementById('photo-label');
+
+                    if (currentPhoto) {
+                        currentPhoto.src = imageUrl;
+                        currentPhoto.style.display = 'block';
+                        photoLabel.textContent = 'Foto Baru (Preview)';
+                    }
+                @endif
+            });
+
+            // UPLOAD FOTO BARU
+            document.getElementById('house_photo').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('File terlalu besar! Maksimal 5MB');
+                    this.value = '';
+                    return;
+                }
+
+                // PREVIEW LOKAL
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const currentPhoto = document.getElementById('current-photo');
+                    const photoLabel = document.getElementById('photo-label');
+
+                    currentPhoto.src = e.target.result;
+                    currentPhoto.style.display = 'block';
+                    photoLabel.textContent = 'Foto Baru (Preview)';
+                };
+                reader.readAsDataURL(file);
+
+                // UPLOAD KE TEMP
+                const formData = new FormData();
+                formData.append('file', file);
+
+                fetch('{{ route('upload.temp') }}', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            document.getElementById('temp_photo').value = data.filename;
+                        }
+                    });
+            });
+        </script>
         <script src="https://cdn.jsdelivr.net/npm/flowbite@4.0.1/dist/flowbite.min.js"></script>
     @endpush
 </x-app-layout>

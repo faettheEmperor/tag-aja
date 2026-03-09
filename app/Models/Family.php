@@ -40,4 +40,14 @@ class Family extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
+    public function kelurahan()
+    {
+        return $this->belongsTo(Kelurahan::class);
+    }
+
+    public function rtRw()
+    {
+        return $this->belongsTo(RtRw::class, 'rt_rw_id');
+    }
 }

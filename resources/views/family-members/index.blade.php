@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Daftar Keluarga') }}
+            {{ __('Daftar Anggota Keluarga') }}
         </h2>
     </x-slot>
     @if (session('status'))
@@ -50,6 +50,20 @@
                                 </form>
                             </div>
                             <div class="flex items-end justify-end gap-4 w-full sm:w-auto">
+                                @if (in_array(Auth::user()->role, ['supervisor', 'admin']))
+                                    <button onclick="window.location.href='{{ route('family-members.export') }}'"
+                                        type="button"
+                                        class="flex items-center justify-end rounded-lg border border-primary-200 bg-green-700 px-3 py-2 text-sm font-medium text-white hover:bg-primary-800 hover:text-gray-50 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700">
+                                        Download
+                                        <svg class="animate-bounce h-4 w-4" aria-hidden="true"
+                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            fill="none" viewBox="0 0 24 24">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                                stroke-width="2"
+                                                d="M12 13V4M7 14H5a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1h-2m-1-5-4 5-4-5m9 8h.01" />
+                                        </svg>
+                                    </button>
+                                @endif
                                 <button onclick="window.location.href='{{ route('family.create') }}'" type="button"
                                     class="flex items-center justify-center rounded-lg border border-primary-200 bg-primary-700 px-3 py-2 text-sm font-medium text-white hover:bg-primary-800 hover:text-gray-50 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700 w-full sm:w-auto">
                                     Tagging
@@ -428,7 +442,6 @@
                 origin: 'left',
                 reset: true,
             })
-            // sr.reveal('.shop-item', {interval: 300, origin:'bottom', reset:false})
         </script>
         <script>
             // Pastikan alert ditampilkan hanya jika ada session status
@@ -455,7 +468,7 @@
             document.addEventListener('DOMContentLoaded', function() {
                 // Inisialisasi data untuk pagination
                 let currentPage = 1;
-                const itemsPerPage = 10; // Jumlah item per halaman
+                const itemsPerPage = 9; // Jumlah item per halaman
                 const shopItems = document.querySelectorAll('.member-item');
                 const totalItems = shopItems.length; // Total jumlah item yang ada
                 const totalPages = Math.max(1, Math.ceil(totalItems /
@@ -512,45 +525,17 @@
             });
         </script>
         <script>
-            const editButtons = document.querySelectorAll('.editBtn');
-            editButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const shopId = this.dataset.shopId || '';
-                    const shopName = this.dataset.shopName || '';
-                    const shopDescription = this.dataset.shopDescription || '';
-                    const shopAddress = this.dataset.shopAddress || 'Alamat tidak tersedia';
-
-                    // Mengisi data ke dalam modal
-                    document.getElementById('shop_id').value = shopId;
-                    document.getElementById('shop_name').value = shopName;
-                    document.getElementById('shop_description').value = shopDescription;
-                    document.getElementById('shop_address').value = shopAddress;
-                    console.log(this.dataset.shopAddress);
-
-                });
-            });
-        </script>
-        <script>
             document.addEventListener('DOMContentLoaded', function() {
-                // Ketika tombol delete ditekan
                 document.querySelectorAll('.deleteBtn').forEach(function(button) {
                     button.addEventListener('click', function() {
-                        // Ambil ID shop dari tombol
-                        var familyId = button.getAttribute('data-family-id');
-
-                        // Set form action dengan route untuk delete
+                        var familyId = this.getAttribute('data-family-id');
                         var deleteForm = document.getElementById('deleteForm');
                         deleteForm.action = '/family/' + familyId;
-
-                        // Set input hidden family_id
                         document.getElementById('family_id').value = familyId;
-
-                        // Tampilkan modal
                         document.getElementById('popup-modal').classList.remove('hidden');
                     });
                 });
 
-                // Tutup modal jika tombol close ditekan
                 document.querySelectorAll('[data-modal-hide="popup-modal"]').forEach(function(button) {
                     button.addEventListener('click', function() {
                         document.getElementById('popup-modal').classList.add('hidden');

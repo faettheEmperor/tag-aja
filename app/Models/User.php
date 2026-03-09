@@ -69,8 +69,18 @@ class User extends Authenticatable
         ];
     }
 
-    public function shops(): HasMany
+    public function kelurahan()
     {
-        return $this->hasMany(Shop::class, 'user_id');
+        return $this->belongsTo(Kelurahan::class);
+    }
+
+    public function rtRw()
+    {
+        return $this->belongsTo(RtRw::class);
+    }
+
+    public function families()
+    {
+        return $this->hasMany(Family::class, 'created_by');
     }
 }

@@ -39,25 +39,32 @@
                                     class="lg:w-full max-w-full sm:w-full mx-auto h-52 rounded-xl border-2 border-orange-300 mb-5">
                                 </div>
 
-                                <label for="rt_address"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">RT/RW/DUSUN<span class="text-red-500">*</span></label>
-                                <select id="rt_address" name="rt_address"
+                                <label for="kelurahan_id"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Kelurahan/Desa<span
+                                        class="text-red-500">*</span></label>
+                                <select id="kelurahan_id" name="kelurahan_id"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                    <option value="">--- Pilih Kelurahan/Desa ---</option>
+                                    @foreach ($kelurahans as $kel)
+                                        <option value="{{ $kel->id }}"
+                                            {{ old('kelurahan_id') == $kel->id ? 'selected' : '' }}>
+                                            {{ $kel->nama }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('kelurahan_id')
+                                    <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="rt_rw_id"
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">RT/RW/DUSUN<span
+                                        class="text-red-500">*</span></label>
+                                <select id="rt_rw_id" name="rt_rw_id"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                                     <option value="">--- Pilih RT/RW/DUSUN ---</option>
-                                    <option value="RT 001 RW 001" {{ old('rt_address') == 'RT 001 RW 001' ? 'selected' : '' }}>RT 001 RW 001</option>
-                                    <option value="RT 002 RW 001" {{ old('rt_address') == 'RT 002 RW 001' ? 'selected' : '' }}>RT 002 RW 001</option>
-                                    <option value="RT 003 RW 001" {{ old('rt_address') == 'RT 003 RW 001' ? 'selected' : '' }}>RT 003 RW 001</option>
-                                    <option value="RT 001 RW 002" {{ old('rt_address') == 'RT 001 RW 002' ? 'selected' : '' }}>RT 001 RW 002</option>
-                                    <option value="RT 002 RW 002" {{ old('rt_address') == 'RT 002 RW 002' ? 'selected' : '' }}>RT 002 RW 002</option>
-                                    <option value="RT 001 RW 006" {{ old('rt_address') == 'RT 001 RW 006' ? 'selected' : '' }}>RT 001 RW 006</option>
-                                    <option value="RT 002 RW 006" {{ old('rt_address') == 'RT 002 RW 006' ? 'selected' : '' }}>RT 002 RW 006</option>
-                                    <option value="RT 003 RW 006" {{ old('rt_address') == 'RT 003 RW 006' ? 'selected' : '' }}>RT 003 RW 006</option>
-                                    <option value="RT 001 RW 007" {{ old('rt_address') == 'RT 001 RW 007' ? 'selected' : '' }}>RT 001 RW 007</option>
-                                    <option value="RT 002 RW 007" {{ old('rt_address') == 'RT 002 RW 007' ? 'selected' : '' }}>RT 002 RW 007</option>
-                                    <option value="RT 003 RW 007" {{ old('rt_address') == 'RT 003 RW 007' ? 'selected' : '' }}>RT 003 RW 007</option>
-                                    <option value="RT 004 RW 007" {{ old('rt_address') == 'RT 004 RW 007' ? 'selected' : '' }}>RT 004 RW 007</option>
                                 </select>
-                                @error('rt_address')
+                                @error('rt_rw_id')
                                     <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
                                 @enderror
                             </div>
@@ -82,7 +89,8 @@
                             <div class="">
                                 <label for="city_address"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Jika KTP NON
-                                    TELUK LOBAM, sebutkan asal Kota/Kabupaten <span class="text-red-500">*</span></label>
+                                    TELUK LOBAM, sebutkan asal Kota/Kabupaten <span
+                                        class="text-red-500">*</span></label>
                                 <input value="{{ old('city_address') }}" type="text" id="city_address"
                                     name="city_address"
                                     class="@error('city_address') is-invalid @enderror block p-3 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 shadow-sm focus:ring-primary-500 focus:border-primary-500"
@@ -205,7 +213,7 @@
                                     </option>
                                 </select>
                                 @error('blt_village')
-                                    <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
+                                    <p class="mt-2 text-xs text-red-600 h-">{{ $message }}</p>
                                 @enderror
                             </div>
 
@@ -213,7 +221,8 @@
                             <div>
                                 <label for="other_assistance"
                                     class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Apakah
-                                    menerima bantuan lainnya? Jika YA, sebutkan <span class="text-red-500">*</span></label>
+                                    menerima bantuan lainnya? Jika YA, sebutkan <span
+                                        class="text-red-500">*</span></label>
                                 <input value="{{ old('other_assistance') }}" type="text" id="other_assistance"
                                     name="other_assistance"
                                     class="@error('other_assistance') is-invalid @enderror block p-3 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 shadow-sm focus:ring-primary-500 focus:border-primary-500"
@@ -225,17 +234,21 @@
                                 @enderror
                             </div>
 
-                            <div class="pb-4">
+                            <div class="pb-4" id="photo-container">
                                 <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                                    for="file_input">
+                                    for="house_photo">
                                     Upload Foto Rumah
                                 </label>
+                                <div id="photo-preview" class="mb-3"></div>
                                 <input
                                     class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none dark:bg-gray-700 dark:text-gray-400"
                                     id="house_photo" name="house_photo" type="file"
                                     accept="image/png, image/jpeg, image/jpg">
+
+                                <input type="hidden" name="temp_photo" id="temp_photo"
+                                    value="{{ old('temp_photo') }}">
                                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">
-                                    PNG, JPG, JPEG (MAX. 2MB).
+                                    PNG, JPG, JPEG (MAX. 5MB).
                                 </p>
                                 @error('house_photo')
                                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -314,222 +327,222 @@
 
             function createMemberForm(index, oldData = {}) {
                 return `
-            <div class="border rounded-xl p-6 shadow bg-gray-50 member-card" data-index="${index}">
-                <h2 class="text-lg font-bold mb-4 flex items-center">
-                    Anggota Keluarga Ke ${index + 1}
-                </h2>
-                
-                <!-- STEP NAV -->
-                <div class="flex gap-2 mb-6 flex-wrap">
-                    <button type="button" onclick="showStep(${index},0)" class="step-btn text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br font-medium rounded-lg text-sm px-4 py-2.5">Blok A</button>
-                    <button type="button" onclick="showStep(${index},1)" class="step-btn text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br font-medium rounded-lg text-sm px-4 py-2.5">Blok B</button>
-                    <button type="button" onclick="showStep(${index},2)" class="step-btn text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br font-medium rounded-lg text-sm px-4 py-2.5">Blok C</button>
-                    <button type="button" onclick="showStep(${index},3)" class="step-btn text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br font-medium rounded-lg text-sm px-4 py-2.5">Blok D</button>
-                </div>
-                
-                <!-- BLOK A -->
-                <div class="step step-${index}-0">
-                    <h3 class="font-semibold mb-3">A. DATA IDENTITAS DASAR</h3>
-                    
-                    <!-- Nama Lengkap -->
-                    <div class="pb-4">
-                        <label class="block mb-2 text-sm font-medium text-gray-900">Nama Lengkap (Sesuai KTP) <span class="text-red-500">*</span></label>
-                        <input type="text" name="members[${index}][full_name]" value="${escapeHtml(oldData.full_name || '')}"
-                            class="block p-3 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300" required>
+                <div class="border rounded-xl p-6 shadow bg-gray-50 member-card" data-index="${index}">
+                    <h2 class="text-lg font-bold mb-4 flex items-center">
+                        Anggota Keluarga Ke ${index + 1}
+                    </h2>
+
+                    <!-- STEP NAV -->
+                    <div class="flex gap-2 mb-6 flex-wrap">
+                        <button type="button" onclick="showStep(${index},0)" class="step-btn text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br font-medium rounded-lg text-sm px-4 py-2.5">Blok A</button>
+                        <button type="button" onclick="showStep(${index},1)" class="step-btn text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br font-medium rounded-lg text-sm px-4 py-2.5">Blok B</button>
+                        <button type="button" onclick="showStep(${index},2)" class="step-btn text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br font-medium rounded-lg text-sm px-4 py-2.5">Blok C</button>
+                        <button type="button" onclick="showStep(${index},3)" class="step-btn text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br font-medium rounded-lg text-sm px-4 py-2.5">Blok D</button>
                     </div>
-                    
-                    <!-- NIK -->
-                    <div class="pb-4">
-                        <label class="block mb-2 text-sm font-medium text-gray-900">Nomor Induk Kependudukan (NIK) <span class="text-red-500">*</span></label>
-                        <input type="text" name="members[${index}][nik]" value="${escapeHtml(oldData.nik || '')}"
-                            class="block p-3 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300" required>
-                    </div>
-                    
-                    <!-- Status dalam keluarga -->
-                    <div class="pb-4">
-                        <label class="block mb-2 text-sm font-medium text-gray-900">Status dalam keluarga <span class="text-red-500">*</span></label>
-                        <select name="members[${index}][status_in_family]" class="bg-gray-50 border border-gray-300 rounded-lg w-full p-2.5 status-family-select" required>
-                            <option value="">--- Pilih status Keluarga ---</option>
-                            ${generateOptions([
-                                'Kepala Keluarga', 'Istri/Suami', 'Anak', 'Menantu', 
-                                'Cucu', 'Orang tua/Mertua', 'Pembantu', 'Sopir'
-                            ], oldData.status_in_family)}
-                        </select>
-                    </div>
-                    
-                    <!-- Tempat Lahir -->
-                    <div class="pb-4">
-                        <label class="block mb-2 text-sm font-medium text-gray-900">Tempat Lahir <span class="text-red-500">*</span></label>
-                        <input type="text" name="members[${index}][place_of_birth]" value="${escapeHtml(oldData.place_of_birth || '')}"
-                            class="block p-3 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300" required>
-                    </div>
-                    
-                    <!-- Tanggal Lahir -->
-                    <div class="pb-4">
-                        <label class="block mb-2 text-sm font-medium text-gray-900">Tanggal Lahir <span class="text-red-500">*</span></label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                <svg class="w-4 h-4 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
-                                </svg>
+
+                    <!-- BLOK A -->
+                    <div class="step step-${index}-0">
+                        <h3 class="font-semibold mb-3">A. DATA IDENTITAS DASAR</h3>
+
+                        <!-- Nama Lengkap -->
+                        <div class="pb-4">
+                            <label class="block mb-2 text-sm font-medium text-gray-900">Nama Lengkap (Sesuai KTP) <span class="text-red-500">*</span></label>
+                            <input type="text" name="members[${index}][full_name]" value="${escapeHtml(oldData.full_name || '')}"
+                                class="block p-3 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300" required>
+                        </div>
+
+                        <!-- NIK -->
+                        <div class="pb-4">
+                            <label class="block mb-2 text-sm font-medium text-gray-900">Nomor Induk Kependudukan (NIK) <span class="text-red-500">*</span></label>
+                            <input type="text" name="members[${index}][nik]" value="${escapeHtml(oldData.nik || '')}"
+                                class="block p-3 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300" required>
+                        </div>
+
+                        <!-- Status dalam keluarga -->
+                        <div class="pb-4">
+                            <label class="block mb-2 text-sm font-medium text-gray-900">Status dalam keluarga <span class="text-red-500">*</span></label>
+                            <select name="members[${index}][status_in_family]" class="bg-gray-50 border border-gray-300 rounded-lg w-full p-2.5 status-family-select" required>
+                                <option value="">--- Pilih status Keluarga ---</option>
+                                ${generateOptions([
+                    'Kepala Keluarga', 'Istri/Suami', 'Anak', 'Menantu',
+                    'Cucu', 'Orang Tua/Mertua', 'Pembantu', 'Sopir'
+                ], oldData.status_in_family)}
+                            </select>
+                        </div>
+
+                        <!-- Tempat Lahir -->
+                        <div class="pb-4">
+                            <label class="block mb-2 text-sm font-medium text-gray-900">Tempat Lahir <span class="text-red-500">*</span></label>
+                            <input type="text" name="members[${index}][place_of_birth]" value="${escapeHtml(oldData.place_of_birth || '')}"
+                                class="block p-3 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300" required>
+                        </div>
+
+                        <!-- Tanggal Lahir -->
+                        <div class="pb-4">
+                            <label class="block mb-2 text-sm font-medium text-gray-900">Tanggal Lahir <span class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                                    <svg class="w-4 h-4 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
+                                    </svg>
+                                </div>
+                                <input type="text" name="members[${index}][date_of_birth]" id="date_of_birth_${index}"
+                                    value="${escapeHtml(oldData.date_of_birth || '')}"
+                                    datepicker datepicker-buttons datepicker-autohide
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full ps-10 p-2.5 datepicker-input"
+                                    placeholder="mm/dd/yyyy" required>
                             </div>
-                            <input type="text" name="members[${index}][date_of_birth]" id="date_of_birth_${index}"
-                                value="${escapeHtml(oldData.date_of_birth || '')}"
-                                datepicker datepicker-buttons datepicker-autohide
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full ps-10 p-2.5 datepicker-input"
-                                placeholder="mm/dd/yyyy" required>
+                        </div>
+
+                        <!-- Jenis Kelamin -->
+                        <div class="pb-4">
+                            <label class="block mb-2 text-sm font-medium text-gray-900">Jenis kelamin <span class="text-red-500">*</span></label>
+                            <select name="members[${index}][gender]" class="bg-gray-50 border border-gray-300 rounded-lg w-full p-2.5" required>
+                                <option value="">--- Pilih Jenis Kelamin ---</option>
+                                ${generateOptions(['Laki-laki', 'Perempuan'], oldData.gender)}
+                            </select>
+                        </div>
+
+                        <button type="button" onclick="nextStep(${index},1)"
+                            class="w-full py-3 px-5 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800">Selanjutnya</button>
+                    </div>
+
+                    <!-- BLOK B -->
+                    <div class="step step-${index}-1 hidden">
+                        <h3 class="font-semibold mb-3">B. KARAKTERISTIK SOSIAL EKONOMI</h3>
+
+                        <!-- Status Perkawinan -->
+                        <div class="pb-4">
+                            <label class="block mb-2 text-sm font-medium text-gray-900">Status Perkawinan <span class="text-red-500">*</span></label>
+                            <select name="members[${index}][marital_status]" class="bg-gray-50 border border-gray-300 rounded-lg w-full p-2.5" required>
+                                <option value="">--- Pilih Status Perkawinan ---</option>
+                                ${generateOptions(['Belum kawin', 'Kawin', 'Cerai hidup', 'Cerai mati'], oldData.marital_status)}
+                            </select>
+                        </div>
+
+                        <!-- Suku -->
+                        <div class="pb-4">
+                            <label class="block mb-2 text-sm font-medium text-gray-900">Suku <span class="text-red-500">*</span></label>
+                            <select name="members[${index}][ethnic]" class="bg-gray-50 border border-gray-300 rounded-lg w-full p-2.5" required>
+                                <option value="">--- Pilih Suku ---</option>
+                                ${generateOptions(['Melayu', 'Jawa', 'Tionghoa', 'Batak', 'Minang', 'Sunda', 'Flores', 'Dayak', 'Bugis', 'Lainnya'], oldData.ethnic)}
+                            </select>
+                        </div>
+
+                        <!-- Pendidikan Tertinggi -->
+                        <div class="pb-4">
+                            <label class="block mb-2 text-sm font-medium text-gray-900">Pendidikan Tertinggi yang Pernah/Sedang Diikuti <span class="text-red-500">*</span></label>
+                            <select name="members[${index}][highest_education_level]" class="bg-gray-50 border border-gray-300 rounded-lg w-full p-2.5" required>
+                                <option value="">--- Pilih Pendidikan ---</option>
+                                ${generateOptions([
+                    'Belum Pernah Bersekolah', 'Tidak Punya Ijazah', 'SD/MI/SDLB/PAKET A',
+                    'SMP/MTS/SMPLB/PAKET B', 'SMA/MA/SMLB/PAKET C', 'SMK/MAK',
+                    'Diploma I/II/III', 'S1/Diploma IV', 'S2', 'S3'
+                ], oldData.highest_education_level)}
+                            </select>
+                        </div>
+
+                        <!-- Ijazah Terakhir -->
+                        <div class="pb-4">
+                            <label class="block mb-2 text-sm font-medium text-gray-900">Ijazah Terakhir <span class="text-red-500">*</span></label>
+                            <select name="members[${index}][highest_education_certificate]" class="bg-gray-50 border border-gray-300 rounded-lg w-full p-2.5" required>
+                                <option value="">--- Pilih Ijazah ---</option>
+                                ${generateOptions([
+                    'Belum Pernah Bersekolah', 'Tidak Punya Ijazah', 'SD/MI/SDLB/PAKET A',
+                    'SMP/MTS/SMPLB/PAKET B', 'SMA/MA/SMLB/PAKET C', 'SMK/MAK',
+                    'Diploma I/II/III', 'S1/Diploma IV', 'S2', 'S3'
+                ], oldData.highest_education_certificate)}
+                            </select>
+                        </div>
+
+                        <!-- Status Ketenagakerjaan -->
+                        <div class="pb-4">
+                            <label class="block mb-2 text-sm font-medium text-gray-900">Status Ketenagakerjaan <span class="text-red-500">*</span></label>
+                            <select name="members[${index}][employment_status]" class="bg-gray-50 border border-gray-300 rounded-lg w-full p-2.5" required>
+                                <option value="">--- Pilih Status Ketenagakerjaan ---</option>
+                                ${generateOptions(['Bekerja', 'Sekolah', 'Mengurus Rumah Tangga', 'Lainnya', 'Pengangguran'], oldData.employment_status)}
+                            </select>
+                        </div>
+
+                        <div class="flex justify-between space-x-5">
+                            <button type="button" onclick="nextStep(${index},0)"
+                                class="w-full py-3 px-5 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800">Kembali</button>
+                            <button type="button" onclick="nextStep(${index},2)"
+                                class="w-full py-3 px-5 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800">Selanjutnya</button>
                         </div>
                     </div>
-                    
-                    <!-- Jenis Kelamin -->
-                    <div class="pb-4">
-                        <label class="block mb-2 text-sm font-medium text-gray-900">Jenis kelamin <span class="text-red-500">*</span></label>
-                        <select name="members[${index}][gender]" class="bg-gray-50 border border-gray-300 rounded-lg w-full p-2.5" required>
-                            <option value="">--- Pilih Jenis Kelamin ---</option>
-                            ${generateOptions(['Laki-laki', 'Perempuan'], oldData.gender)}
-                        </select>
+
+                    <!-- BLOK C -->
+                    <div class="step step-${index}-2 hidden">
+                        <h3 class="font-semibold mb-3">C. KETENAGAKERJAAN</h3>
+
+                        <!-- Pekerjaan Utama -->
+                        <div class="pb-4">
+                            <label class="block mb-2 text-sm font-medium text-gray-900">Pekerjaan Utama <span class="text-red-500">*</span></label>
+                            <input type="text" name="members[${index}][main_occupation]" value="${escapeHtml(oldData.main_occupation || '')}"
+                                class="block p-3 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300" required>
+                        </div>
+
+                        <!-- Status Dalam Pekerjaan -->
+                        <div class="pb-4">
+                            <label class="block mb-2 text-sm font-medium text-gray-900">Status Dalam Pekerjaan <span class="text-red-500">*</span></label>
+                            <select name="members[${index}][employment_position]" class="bg-gray-50 border border-gray-300 rounded-lg w-full p-2.5" required>
+                                <option value="">--- Pilih Status Dalam Pekerjaan ---</option>
+                                ${generateOptions([
+                    'Berusaha', 'Buruh/Karyawan/Pegawai Swasta',
+                    'PNS/TNI/POLRI/Pegawai BUMN/Pegawai BUMD/Pejabat Negara',
+                    'Pekerja bebas (Freelance)', 'Pekerja tidak dibayar'
+                ], oldData.employment_position)}
+                            </select>
+                        </div>
+
+                        <div class="flex justify-between space-x-5">
+                            <button type="button" onclick="nextStep(${index},1)"
+                                class="w-full py-3 px-5 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800">Kembali</button>
+                            <button type="button" onclick="nextStep(${index},3)"
+                                class="w-full py-3 px-5 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800">Selanjutnya</button>
+                        </div>
                     </div>
-                    
-                    <button type="button" onclick="nextStep(${index},1)"
-                        class="w-full py-3 px-5 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800">Selanjutnya</button>
-                </div>
-                
-                <!-- BLOK B -->
-                <div class="step step-${index}-1 hidden">
-                    <h3 class="font-semibold mb-3">B. KARAKTERISTIK SOSIAL EKONOMI</h3>
-                    
-                    <!-- Status Perkawinan -->
-                    <div class="pb-4">
-                        <label class="block mb-2 text-sm font-medium text-gray-900">Status Perkawinan <span class="text-red-500">*</span></label>
-                        <select name="members[${index}][marital_status]" class="bg-gray-50 border border-gray-300 rounded-lg w-full p-2.5" required>
-                            <option value="">--- Pilih Status Perkawinan ---</option>
-                            ${generateOptions(['Belum kawin', 'Kawin', 'Cerai hidup', 'Cerai mati'], oldData.marital_status)}
-                        </select>
-                    </div>
-                    
-                    <!-- Suku -->
-                    <div class="pb-4">
-                        <label class="block mb-2 text-sm font-medium text-gray-900">Suku <span class="text-red-500">*</span></label>
-                        <select name="members[${index}][ethnic]" class="bg-gray-50 border border-gray-300 rounded-lg w-full p-2.5" required>
-                            <option value="">--- Pilih Suku ---</option>
-                            ${generateOptions(['Melayu', 'Jawa', 'Tionghoa', 'Batak', 'Minang', 'Sunda', 'Flores', 'Dayak', 'Bugis', 'Lainnya'], oldData.ethnic)}
-                        </select>
-                    </div>
-                    
-                    <!-- Pendidikan Tertinggi -->
-                    <div class="pb-4">
-                        <label class="block mb-2 text-sm font-medium text-gray-900">Pendidikan Tertinggi yang Pernah/Sedang Diikuti <span class="text-red-500">*</span></label>
-                        <select name="members[${index}][highest_education_level]" class="bg-gray-50 border border-gray-300 rounded-lg w-full p-2.5" required>
-                            <option value="">--- Pilih Pendidikan ---</option>
-                            ${generateOptions([
-                                'Belum Pernah Bersekolah', 'Tidak Punya Ijazah', 'SD/MI/SDLB/PAKET A',
-                                'SMP/MTS/SMPLB/PAKET B', 'SMA/MA/SMLB/PAKET C', 'SMK/MAK',
-                                'Diploma I/II/III', 'S1/Diploma IV', 'S2', 'S3'
-                            ], oldData.highest_education_level)}
-                        </select>
-                    </div>
-                    
-                    <!-- Ijazah Terakhir -->
-                    <div class="pb-4">
-                        <label class="block mb-2 text-sm font-medium text-gray-900">Ijazah Terakhir <span class="text-red-500">*</span></label>
-                        <select name="members[${index}][highest_education_certificate]" class="bg-gray-50 border border-gray-300 rounded-lg w-full p-2.5" required>
-                            <option value="">--- Pilih Ijazah ---</option>
-                            ${generateOptions([
-                                'Belum Pernah Bersekolah', 'Tidak Punya Ijazah', 'SD/MI/SDLB/PAKET A',
-                                'SMP/MTS/SMPLB/PAKET B', 'SMA/MA/SMLB/PAKET C', 'SMK/MAK',
-                                'Diploma I/II/III', 'S1/Diploma IV', 'S2', 'S3'
-                            ], oldData.highest_education_certificate)}
-                        </select>
-                    </div>
-                    
-                    <!-- Status Ketenagakerjaan -->
-                    <div class="pb-4">
-                        <label class="block mb-2 text-sm font-medium text-gray-900">Status Ketenagakerjaan <span class="text-red-500">*</span></label>
-                        <select name="members[${index}][employment_status]" class="bg-gray-50 border border-gray-300 rounded-lg w-full p-2.5" required>
-                            <option value="">--- Pilih Status Ketenagakerjaan ---</option>
-                            ${generateOptions(['Bekerja', 'Sekolah', 'Mengurus Rumah Tangga', 'Lainnya', 'Pengangguran'], oldData.employment_status)}
-                        </select>
-                    </div>
-                    
-                    <div class="flex justify-between space-x-5">
-                        <button type="button" onclick="nextStep(${index},0)"
-                            class="w-full py-3 px-5 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800">Kembali</button>
+
+                    <!-- BLOK D -->
+                    <div class="step step-${index}-3 hidden">
+                        <h3 class="font-semibold mb-3">D. KESEHATAN & DISABILITAS</h3>
+
+                        <!-- Jaminan Kesehatan -->
+                        <div class="pb-4">
+                            <label class="block mb-2 text-sm font-medium text-gray-900">Jaminan Kesehatan yang dimiliki <span class="text-red-500">*</span></label>
+                            <select name="members[${index}][health_insurance]" class="bg-gray-50 border border-gray-300 rounded-lg w-full p-2.5" required>
+                                <option value="">--- Pilih Jaminan Kesehatan ---</option>
+                                ${generateOptions([
+                    'BPJS Kesehatan PBI', 'BPJS Kesehatan Non PBI/Mandiri',
+                    'JAMKESDA', 'Tidak memiliki'
+                ], oldData.health_insurance)}
+                            </select>
+                        </div>
+
+                        <!-- Status Stunting -->
+                        <div class="pb-4">
+                            <label class="block mb-2 text-sm font-medium text-gray-900">Status Stunting <span class="text-red-500">*</span></label>
+                            <select name="members[${index}][stunting]" class="bg-gray-50 border border-gray-300 rounded-lg w-full p-2.5" required>
+                                <option value="">--- Pilih Status Stunting ---</option>
+                                ${generateOptions(['Ya', 'Tidak'], oldData.stunting)}
+                            </select>
+                        </div>
+
+                        <!-- Status Disabilitas -->
+                        <div class="pb-4">
+                            <label class="block mb-2 text-sm font-medium text-gray-900">Status Disabilitas <span class="text-red-500">*</span></label>
+                            <select name="members[${index}][disability]" class="bg-gray-50 border border-gray-300 rounded-lg w-full p-2.5" required>
+                                <option value="">--- Pilih Status Disabilitas ---</option>
+                                ${generateOptions(['Ya', 'Tidak'], oldData.disability)}
+                            </select>
+                        </div>
+
                         <button type="button" onclick="nextStep(${index},2)"
-                            class="w-full py-3 px-5 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800">Selanjutnya</button>
-                    </div>
-                </div>
-                
-                <!-- BLOK C -->
-                <div class="step step-${index}-2 hidden">
-                    <h3 class="font-semibold mb-3">C. KETENAGAKERJAAN</h3>
-                    
-                    <!-- Pekerjaan Utama -->
-                    <div class="pb-4">
-                        <label class="block mb-2 text-sm font-medium text-gray-900">Pekerjaan Utama <span class="text-red-500">*</span></label>
-                        <input type="text" name="members[${index}][main_occupation]" value="${escapeHtml(oldData.main_occupation || '')}"
-                            class="block p-3 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300" required>
-                    </div>
-                    
-                    <!-- Status Dalam Pekerjaan -->
-                    <div class="pb-4">
-                        <label class="block mb-2 text-sm font-medium text-gray-900">Status Dalam Pekerjaan <span class="text-red-500">*</span></label>
-                        <select name="members[${index}][employment_position]" class="bg-gray-50 border border-gray-300 rounded-lg w-full p-2.5" required>
-                            <option value="">--- Pilih Status Dalam Pekerjaan ---</option>
-                            ${generateOptions([
-                                'Berusaha', 'Buruh/Karyawan/Pegawai Swasta',
-                                'PNS/TNI/POLRI/Pegawai BUMN/Pegawai BUMD/Pejabat Negara',
-                                'Pekerja bebas (Freelance)', 'Pekerja tidak dibayar'
-                            ], oldData.employment_position)}
-                        </select>
-                    </div>
-                    
-                    <div class="flex justify-between space-x-5">
-                        <button type="button" onclick="nextStep(${index},1)"
                             class="w-full py-3 px-5 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800">Kembali</button>
-                        <button type="button" onclick="nextStep(${index},3)"
-                            class="w-full py-3 px-5 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800">Selanjutnya</button>
                     </div>
                 </div>
-                
-                <!-- BLOK D -->
-                <div class="step step-${index}-3 hidden">
-                    <h3 class="font-semibold mb-3">D. KESEHATAN & DISABILITAS</h3>
-                    
-                    <!-- Jaminan Kesehatan -->
-                    <div class="pb-4">
-                        <label class="block mb-2 text-sm font-medium text-gray-900">Jaminan Kesehatan yang dimiliki <span class="text-red-500">*</span></label>
-                        <select name="members[${index}][health_insurance]" class="bg-gray-50 border border-gray-300 rounded-lg w-full p-2.5" required>
-                            <option value="">--- Pilih Jaminan Kesehatan ---</option>
-                            ${generateOptions([
-                                'BPJS Kesehatan PBI', 'BPJS Kesehatan Non PBI/Mandiri',
-                                'JAMKESDA', 'Tidak memiliki'
-                            ], oldData.health_insurance)}
-                        </select>
-                    </div>
-                    
-                    <!-- Status Stunting -->
-                    <div class="pb-4">
-                        <label class="block mb-2 text-sm font-medium text-gray-900">Status Stunting <span class="text-red-500">*</span></label>
-                        <select name="members[${index}][stunting]" class="bg-gray-50 border border-gray-300 rounded-lg w-full p-2.5" required>
-                            <option value="">--- Pilih Status Stunting ---</option>
-                            ${generateOptions(['Ya', 'Tidak'], oldData.stunting)}
-                        </select>
-                    </div>
-                    
-                    <!-- Status Disabilitas -->
-                    <div class="pb-4">
-                        <label class="block mb-2 text-sm font-medium text-gray-900">Status Disabilitas <span class="text-red-500">*</span></label>
-                        <select name="members[${index}][disability]" class="bg-gray-50 border border-gray-300 rounded-lg w-full p-2.5" required>
-                            <option value="">--- Pilih Status Disabilitas ---</option>
-                            ${generateOptions(['Ya', 'Tidak'], oldData.disability)}
-                        </select>
-                    </div>
-                    
-                    <button type="button" onclick="nextStep(${index},2)"
-                        class="w-full py-3 px-5 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800">Kembali</button>
-                </div>
-            </div>
-        `;
+            `;
             }
 
             // ============================================
@@ -792,7 +805,195 @@
                 document.getElementById('longitude').value = defaultLng;
             }
         </script>
-        <script></script>
+        <script>
+            document.getElementById('house_photo').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const formData = new FormData();
+                formData.append('file', file);
+
+                fetch('{{ route('upload.temp') }}', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json' // TAMBAHKAN INI
+                        },
+                        body: formData
+                    })
+                    .then(response => {
+                        return response.json();
+                    })
+                    .then(data => {
+
+                        if (data.success) {
+                            document.getElementById('temp_photo').value = data.filename;
+
+                            // Tampilkan preview
+                            const preview = document.getElementById('photo-preview');
+                            preview.innerHTML = `
+                <div class="relative inline-block">
+                    <img src="${data.url}" class="h-20 w-20 object-cover rounded border border-gray-300">
+                    <button type="button" onclick="removeTempPhoto()" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            `;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error detail:', error);
+                    });
+            });
+        </script>
+        <script>
+            // FUNGSI REMOVE TEMP PHOTO (SUDAH ADA)
+            function removeTempPhoto() {
+                const tempId = document.getElementById('temp_photo').value;
+
+                if (tempId) {
+                    fetch('{{ route('delete.temp') }}', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            filename: tempId + '.*'
+                        })
+                    });
+                }
+
+                document.getElementById('photo-preview').innerHTML = '';
+                document.getElementById('house_photo').value = '';
+                document.getElementById('temp_photo').value = '';
+            }
+        </script>
+        @if (old('temp_photo'))
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const filename = "{{ old('temp_photo') }}";
+
+                    if (filename) {
+                        const imageUrl = `/storage/temp/${filename}`;
+
+                        const preview = document.getElementById('photo-preview');
+                        preview.innerHTML = `
+            <div class="relative inline-block">
+                <img src="${imageUrl}" 
+                     class="h-20 w-20 object-cover rounded border border-gray-300">
+                <button type="button" 
+                        onclick="removeTempPhoto()" 
+                        class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1">
+                    X
+                </button>
+            </div>
+        `;
+                    }
+                });
+            </script>
+        @endif
+        <script>
+            document.getElementById('kelurahan_id').addEventListener('change', function() {
+                const kelurahanId = this.value;
+                const rtRwSelect = document.getElementById('rt_rw_id');
+
+                rtRwSelect.innerHTML = '<option value="">--- Pilih RT/RW ---</option>';
+
+                if (kelurahanId) {
+                    fetch(`/get-rt-by-kelurahan/${kelurahanId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            data.forEach(item => {
+                                const option = document.createElement('option');
+                                option.value = item.id;
+                                option.textContent = `RT ${item.rt} / RW ${item.rw}`;
+                                rtRwSelect.appendChild(option);
+                            });
+                        });
+                }
+            });
+
+            // KALAU ADA OLD VALUE (PAS ERROR)
+            @if (old('kelurahan_id'))
+                document.addEventListener('DOMContentLoaded', function() {
+                    const kelurahanId = "{{ old('kelurahan_id') }}";
+                    const rtRwId = "{{ old('rt_rw_id') }}";
+
+                    if (kelurahanId) {
+                        fetch(`/get-rt-by-kelurahan/${kelurahanId}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                const rtRwSelect = document.getElementById('rt_rw_id');
+                                rtRwSelect.innerHTML = '<option value="">--- Pilih RT/RW ---</option>';
+
+                                data.forEach(item => {
+                                    const option = document.createElement('option');
+                                    option.value = item.id;
+                                    option.textContent = `RT ${item.rt} / RW ${item.rw}`;
+                                    if (item.id == rtRwId) {
+                                        option.selected = true;
+                                    }
+                                    rtRwSelect.appendChild(option);
+                                });
+                            });
+                    }
+                });
+            @endif
+        </script>
+        <script>
+            document.getElementById('kelurahan_id').addEventListener('change', function() {
+                const kelurahanId = this.value;
+                const rtRwSelect = document.getElementById('rt_rw_id');
+
+                rtRwSelect.innerHTML = '<option value="">--- Pilih RT/RW/DUSUN ---</option>';
+                rtRwSelect.disabled = true;
+
+                if (kelurahanId) {
+                    fetch(`/get-rt-by-kelurahan/${kelurahanId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            data.forEach(item => {
+                                const option = document.createElement('option');
+                                option.value = item.id;
+
+                                // FORMAT DENGAN KODE
+                                if (item.rt === 'PULAU BUAU') {
+                                    option.textContent = `[${item.kode_sls}] ${item.rt}`;
+                                } else {
+                                    option.textContent =
+                                        `[${item.kode_sls}] RT ${item.rt} RW ${item.rw}`;
+                                }
+
+                                rtRwSelect.appendChild(option);
+                            });
+                            rtRwSelect.disabled = false;
+                        });
+                }
+            });
+
+            // KALAU ADA OLD VALUE (PAS ERROR)
+            @if (old('kelurahan_id'))
+                document.addEventListener('DOMContentLoaded', function() {
+                    const kelurahanId = "{{ old('kelurahan_id') }}";
+                    const rtRwId = "{{ old('rt_rw_id') }}";
+
+                    if (kelurahanId) {
+                        // Trigger change event untuk load RT/RW
+                        const event = new Event('change');
+                        document.getElementById('kelurahan_id').value = kelurahanId;
+                        document.getElementById('kelurahan_id').dispatchEvent(event);
+
+                        // Setelah data termuat, pilih rt_rw_id yang sesuai
+                        setTimeout(() => {
+                            document.getElementById('rt_rw_id').value = rtRwId;
+                        }, 500);
+                    }
+                });
+            @endif
+        </script>
         <script src="https://cdn.jsdelivr.net/npm/flowbite@4.0.1/dist/flowbite.min.js"></script>
     @endpush
 </x-app-layout>
