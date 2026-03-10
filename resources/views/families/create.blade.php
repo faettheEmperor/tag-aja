@@ -88,13 +88,13 @@
                             <!-- Kota Asal -->
                             <div class="">
                                 <label for="city_address"
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Jika KTP NON
-                                    TELUK LOBAM, sebutkan asal Kota/Kabupaten <span
+                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Jika
+                                    Kelurahan Domisili Berbeda dengan KTP, sebutkan asal Kota/Kabupaten<span
                                         class="text-red-500">*</span></label>
                                 <input value="{{ old('city_address') }}" type="text" id="city_address"
                                     name="city_address"
                                     class="@error('city_address') is-invalid @enderror block p-3 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 shadow-sm focus:ring-primary-500 focus:border-primary-500"
-                                    placeholder="isikan '-' jika KTP Teluk Lobam" required>
+                                    placeholder="isikan '-' jika KTP Kelurahan Domisili Sama" required>
                                 @error('city_address')
                                     <div class="pt-2">
                                         <span class="text-red-500 text-sm">Kesalahan input, {{ $message }}</span>
@@ -240,6 +240,7 @@
                                     Upload Foto Rumah
                                 </label>
                                 <div id="photo-preview" class="mb-3"></div>
+                                <div id="photo-loader" class="mb-3"></div>
                                 <input
                                     class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none dark:bg-gray-700 dark:text-gray-400"
                                     id="house_photo" name="house_photo" type="file"
@@ -806,49 +807,6 @@
             }
         </script>
         <script>
-            document.getElementById('house_photo').addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (!file) return;
-
-                const formData = new FormData();
-                formData.append('file', file);
-
-                fetch('{{ route('upload.temp') }}', {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'Accept': 'application/json' // TAMBAHKAN INI
-                        },
-                        body: formData
-                    })
-                    .then(response => {
-                        return response.json();
-                    })
-                    .then(data => {
-
-                        if (data.success) {
-                            document.getElementById('temp_photo').value = data.filename;
-
-                            // Tampilkan preview
-                            const preview = document.getElementById('photo-preview');
-                            preview.innerHTML = `
-                <div class="relative inline-block">
-                    <img src="${data.url}" class="h-20 w-20 object-cover rounded border border-gray-300">
-                    <button type="button" onclick="removeTempPhoto()" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
-                </div>
-            `;
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error detail:', error);
-                    });
-            });
-        </script>
-        <script>
             // FUNGSI REMOVE TEMP PHOTO (SUDAH ADA)
             function removeTempPhoto() {
                 const tempId = document.getElementById('temp_photo').value;
@@ -896,11 +854,123 @@
             </script>
         @endif
         <script>
+            // ============================================
+            // OLD TEMP PHOTO (PAS ERROR)
+            // ============================================
+            document.addEventListener('DOMContentLoaded', function() {
+                @if (old('temp_photo'))
+                    const filename = "{{ old('temp_photo') }}";
+                    const imageUrl = `/storage/temp/${filename}`;
+
+                    document.getElementById('temp_photo').value = filename;
+
+                    const preview = document.getElementById('photo-preview');
+                    preview.innerHTML = `
+            <div class="relative inline-block">
+                <img src="${imageUrl}" class="h-20 w-20 object-cover rounded border border-gray-300">
+                <button type="button" onclick="removeTempPhoto()" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1">X</button>
+            </div>
+        `;
+                @endif
+            });
+
+            // ============================================
+            // UPLOAD FOTO BARU (DENGAN LOADER)
+            // ============================================
+            document.getElementById('house_photo').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('File terlalu besar! Maksimal 5MB');
+                    this.value = '';
+                    return;
+                }
+
+                // TAMPILKAN LOADER
+                const loaderDiv = document.getElementById('photo-loader');
+                loaderDiv.innerHTML = `
+                    <div class="loading-wrapper">
+                        <div class="simple-spinner"></div>
+                        <span class="loading-text">Mengupload foto...</span>
+                    </div>
+                `;
+
+                // PREVIEW LOKAL
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('photo-preview');
+                    preview.innerHTML =
+                        `<img src="${e.target.result}" class="h-20 w-20 object-cover rounded border border-gray-300">`;
+                };
+                reader.readAsDataURL(file);
+
+                // UPLOAD KE TEMP
+                const formData = new FormData();
+                formData.append('file', file);
+
+                fetch('{{ route('upload.temp') }}', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            document.getElementById('temp_photo').value = data.filename;
+                            loaderDiv.innerHTML = ''; // HAPUS LOADER
+
+                            // UPDATE PREVIEW DENGAN URL ASLI
+                            const preview = document.getElementById('photo-preview');
+                            preview.innerHTML = `
+                                <div class="relative inline-block">
+                                    <img src="${data.url}" class="h-20 w-20 object-cover rounded border border-gray-300">
+                                    <button type="button" onclick="removeTempPhoto()" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1">X</button>
+                                </div>
+                            `;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        loaderDiv.innerHTML = '<p class="text-sm text-red-600 text-center">Gagal upload</p>';
+                    });
+            });
+
+            // ============================================
+            // FUNGSI REMOVE TEMP PHOTO
+            // ============================================
+            function removeTempPhoto() {
+                const tempId = document.getElementById('temp_photo').value;
+                if (tempId) {
+                    fetch('{{ route('delete.temp') }}', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            filename: tempId
+                        })
+                    });
+                }
+                document.getElementById('photo-preview').innerHTML = '';
+                document.getElementById('photo-loader').innerHTML = '';
+                document.getElementById('house_photo').value = '';
+                document.getElementById('temp_photo').value = '';
+            }
+        </script>
+
+        <script>
+            // ============================================
+            // DEPENDENT DROPDOWN KELURAHAN -> RT/RW
+            // ============================================
             document.getElementById('kelurahan_id').addEventListener('change', function() {
                 const kelurahanId = this.value;
                 const rtRwSelect = document.getElementById('rt_rw_id');
 
-                rtRwSelect.innerHTML = '<option value="">--- Pilih RT/RW ---</option>';
+                rtRwSelect.innerHTML = '<option value="">--- Pilih RT/RW/DUSUN ---</option>';
 
                 if (kelurahanId) {
                     fetch(`/get-rt-by-kelurahan/${kelurahanId}`)
@@ -909,87 +979,89 @@
                             data.forEach(item => {
                                 const option = document.createElement('option');
                                 option.value = item.id;
-                                option.textContent = `RT ${item.rt} / RW ${item.rw}`;
+                                option.textContent = `[${item.kode_sls}] RT ${item.rt} / RW ${item.rw}`;
                                 rtRwSelect.appendChild(option);
                             });
                         });
                 }
             });
 
-            // KALAU ADA OLD VALUE (PAS ERROR)
+            // OLD VALUE UNTUK KELURAHAN
             @if (old('kelurahan_id'))
                 document.addEventListener('DOMContentLoaded', function() {
                     const kelurahanId = "{{ old('kelurahan_id') }}";
                     const rtRwId = "{{ old('rt_rw_id') }}";
 
                     if (kelurahanId) {
-                        fetch(`/get-rt-by-kelurahan/${kelurahanId}`)
-                            .then(response => response.json())
-                            .then(data => {
-                                const rtRwSelect = document.getElementById('rt_rw_id');
-                                rtRwSelect.innerHTML = '<option value="">--- Pilih RT/RW ---</option>';
-
-                                data.forEach(item => {
-                                    const option = document.createElement('option');
-                                    option.value = item.id;
-                                    option.textContent = `RT ${item.rt} / RW ${item.rw}`;
-                                    if (item.id == rtRwId) {
-                                        option.selected = true;
-                                    }
-                                    rtRwSelect.appendChild(option);
-                                });
-                            });
+                        document.getElementById('kelurahan_id').value = kelurahanId;
+                        document.getElementById('kelurahan_id').dispatchEvent(new Event('change'));
+                        setTimeout(() => document.getElementById('rt_rw_id').value = rtRwId, 500);
                     }
                 });
             @endif
         </script>
         <script>
+            // ============================================
+            // DEPENDENT DROPDOWN KELURAHAN -> RT/RW DENGAN LOADER
+            // ============================================
             document.getElementById('kelurahan_id').addEventListener('change', function() {
                 const kelurahanId = this.value;
                 const rtRwSelect = document.getElementById('rt_rw_id');
 
-                rtRwSelect.innerHTML = '<option value="">--- Pilih RT/RW/DUSUN ---</option>';
+                // TAMPILKAN LOADING DI DROPDOWN
+                rtRwSelect.innerHTML = '<option value="">Loading RT/RW...</option>';
                 rtRwSelect.disabled = true;
 
                 if (kelurahanId) {
                     fetch(`/get-rt-by-kelurahan/${kelurahanId}`)
                         .then(response => response.json())
                         .then(data => {
+                            // HAPUS LOADING, TAMPILKAN DATA
+                            rtRwSelect.innerHTML = '<option value="">--- Pilih RT/RW ---</option>';
+
                             data.forEach(item => {
                                 const option = document.createElement('option');
                                 option.value = item.id;
-
-                                // FORMAT DENGAN KODE
-                                if (item.rt === 'PULAU BUAU') {
-                                    option.textContent = `[${item.kode_sls}] ${item.rt}`;
-                                } else {
-                                    option.textContent =
-                                        `[${item.kode_sls}] RT ${item.rt} RW ${item.rw}`;
-                                }
-
+                                option.textContent = `[${item.kode_sls}] RT ${item.rt} RW ${item.rw}`;
                                 rtRwSelect.appendChild(option);
                             });
+
+                            rtRwSelect.disabled = false;
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            rtRwSelect.innerHTML = '<option value="">Gagal memuat data</option>';
                             rtRwSelect.disabled = false;
                         });
+                } else {
+                    // KALAU KELURAHAN KOSONG
+                    rtRwSelect.innerHTML = '<option value="">--- Pilih RT/RW ---</option>';
+                    rtRwSelect.disabled = false;
                 }
             });
 
-            // KALAU ADA OLD VALUE (PAS ERROR)
+            // OLD VALUE UNTUK KELURAHAN (PAS ERROR)
             @if (old('kelurahan_id'))
                 document.addEventListener('DOMContentLoaded', function() {
                     const kelurahanId = "{{ old('kelurahan_id') }}";
                     const rtRwId = "{{ old('rt_rw_id') }}";
 
                     if (kelurahanId) {
-                        // Trigger change event untuk load RT/RW
-                        const event = new Event('change');
+                        // SET KELURAHAN
                         document.getElementById('kelurahan_id').value = kelurahanId;
+
+                        // TRIGGER CHANGE UNTUK LOAD RT/RW
+                        const event = new Event('change');
                         document.getElementById('kelurahan_id').dispatchEvent(event);
 
-                        // Setelah data termuat, pilih rt_rw_id yang sesuai
-                        setTimeout(() => {
-                            document.getElementById('rt_rw_id').value = rtRwId;
-                        }, 500);
+                        // SET RT/RW SETELAH DATA LOAD
+                        const checkLoaded = setInterval(function() {
+                            const rtRwSelect = document.getElementById('rt_rw_id');
+                            if (rtRwSelect.options.length > 1) { // SUDAH TERLOAD
+                                rtRwSelect.value = rtRwId;
+                                clearInterval(checkLoaded);
+                            }
+                        }, 100);
                     }
                 });
             @endif

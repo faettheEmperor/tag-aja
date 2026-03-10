@@ -342,7 +342,10 @@ class FamilyController extends Controller
         // AMBIL SEMUA KELURAHAN
         $kelurahans = Kelurahan::all();
 
-        return view('families.edit', compact('family', 'kelurahans'));
+        // AMBIL RT/RW BERDASARKAN KELURAHAN FAMILY
+        $rtRws = RtRw::where('kelurahan_id', $family->kelurahan_id)->get();
+
+        return view('families.edit', compact('family', 'kelurahans', 'rtRws'));
     }
 
     public function update(Request $request, $id)
@@ -363,7 +366,7 @@ class FamilyController extends Controller
             'ownership_kk.required' => 'Kepemilikan Kartu Keluarga wajib diisi',
             'number_of_family_member.required' => 'Jumlah anggota wajib diisi',
             'number_of_family_member.numeric' => 'Jumlah anggota harus berupa angka',
-            'kelurahan_id' => 'Kelurahan/Desa harus diisi',
+            'kelurahan_id.required' => 'Kelurahan/Desa harus diisi',
             'rt_rw_id.required' => 'Alamat RT harus diisi',
             'ktp_address.required' => 'Alamat KTP harus diisi',
             'city_address.required' => 'asal Kabupaten/Kota harus diisi',
@@ -467,7 +470,44 @@ class FamilyController extends Controller
 
             // PROSES UPLOAD FOTO (JIKA ADA FILE BARU)
             $path = $family->house_photo; // Pakai foto lama sebagai default
-            if ($request->hasFile('house_photo')) {
+            // CEK TEMP PHOTO DULU (TAMBAHKAN BLOK INI)
+            if ($request->has('temp_photo') && !empty($request->temp_photo)) {
+                $tempId = $request->temp_photo;
+                $files = Storage::disk('public')->files('temp');
+
+                foreach ($files as $file) {
+                    if (strpos($file, $tempId) !== false) {
+                        $extension = pathinfo($file, PATHINFO_EXTENSION);
+
+                        // Cari nama kepala keluarga
+                        $kepalaKeluarga = '';
+                        foreach ($validated['members'] as $member) {
+                            if ($member['status_in_family'] === 'Kepala Keluarga') {
+                                $kepalaKeluarga = $member['full_name'];
+                                break;
+                            }
+                        }
+
+                        $namaBersih = Str::slug($kepalaKeluarga ?: 'keluarga', '-');
+                        $timestamp = Carbon::now()->format('Ymd-His');
+                        $namaFile = $namaBersih . '-' . $timestamp . '.' . $extension;
+
+                        // HAPUS FOTO LAMA (JIKA ADA)
+                        if ($family->house_photo && Storage::disk('public')->exists($family->house_photo)) {
+                            Storage::disk('public')->delete($family->house_photo);
+                        }
+
+                        // PINDAHKAN FILE DARI TEMP KE HOUSE-PHOTOS
+                        $newPath = 'house-photos/' . $namaFile;
+                        Storage::disk('public')->move($file, $newPath);
+                        $path = $newPath;
+
+                        break;
+                    }
+                }
+            }
+            // KALAU TIDAK ADA TEMP, CEK UPLOAD LANGSUNG
+            elseif ($request->hasFile('house_photo')) {
                 $file = $request->file('house_photo');
 
                 // Cari nama kepala keluarga

@@ -64,6 +64,12 @@
                                 <select id="rt_rw_id" name="rt_rw_id"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                                     <option value="">--- Pilih RT/RW/DUSUN ---</option>
+                                    @foreach ($rtRws as $rt)
+                                        <option value="{{ $rt->id }}"
+                                            {{ $family->rt_rw_id == $rt->id ? 'selected' : '' }}>
+                                            [{{ $rt->kode_sls }}] RT {{ $rt->rt }} / RW {{ $rt->rw }}
+                                        </option>
+                                    @endforeach
                                 </select>
                                 @error('rt_rw_id')
                                     <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
@@ -838,63 +844,14 @@
             }
         </script>
         <script>
+            // CEK OLD TEMP PHOTO (PAS ERROR VALIDASI)
             document.addEventListener('DOMContentLoaded', function() {
-                const kelurahanId = "{{ $family->kelurahan_id }}";
-                const rtRwId = "{{ $family->rt_rw_id }}";
-
-                if (kelurahanId) {
-                    // Load RT/RW
-                    fetch(`/get-rt-by-kelurahan/${kelurahanId}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            const rtRwSelect = document.getElementById('rt_rw_id');
-                            rtRwSelect.innerHTML = '<option value="">--- Pilih RT/RW/DUSUN ---</option>';
-
-                            data.forEach(item => {
-                                const option = document.createElement('option');
-                                option.value = item.id;
-                                option.textContent = `[${item.kode_sls}] RT ${item.rt} RW ${item.rw}`;
-                                if (item.id == rtRwId) {
-                                    option.selected = true;
-                                }
-                                rtRwSelect.appendChild(option);
-                            });
-                        });
-                }
-            });
-
-            // Event listener untuk change kelurahan
-            document.getElementById('kelurahan_id').addEventListener('change', function() {
-                const kelurahanId = this.value;
-                const rtRwSelect = document.getElementById('rt_rw_id');
-
-                rtRwSelect.innerHTML = '<option value="">--- Pilih RT/RW/DUSUN ---</option>';
-
-                if (kelurahanId) {
-                    fetch(`/get-rt-by-kelurahan/${kelurahanId}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            data.forEach(item => {
-                                const option = document.createElement('option');
-                                option.value = item.id;
-                                option.textContent = `[${item.kode_sls}] RT ${item.rt} RW ${item.rw}`;
-                                rtRwSelect.appendChild(option);
-                            });
-                        });
-                }
-            });
-        </script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                // CEK OLD TEMP PHOTO (PAS ERROR VALIDASI)
                 @if (old('temp_photo'))
                     const filename = "{{ old('temp_photo') }}";
                     const imageUrl = `/storage/temp/${filename}`;
 
-                    // ISI HIDDEN INPUT
                     document.getElementById('temp_photo').value = filename;
 
-                    // GANTI FOTO LAMA DENGAN PREVIEW
                     const currentPhoto = document.getElementById('current-photo');
                     const photoLabel = document.getElementById('photo-label');
 
@@ -906,7 +863,7 @@
                 @endif
             });
 
-            // UPLOAD FOTO BARU
+            // UPLOAD FOTO BARU (SATU AJA!)
             document.getElementById('house_photo').addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 if (!file) return;
@@ -917,7 +874,16 @@
                     return;
                 }
 
-                // PREVIEW LOKAL
+                // TAMPILKAN LOADING DI PREVIEW CONTAINER
+                const previewContainer = document.getElementById('photo-preview');
+                previewContainer.innerHTML = `
+        <div class="flex items-center space-x-2 p-2 bg-gray-100 rounded">
+            <div class="loader w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+            <span class="text-sm text-gray-600">Mengupload...</span>
+        </div>
+    `;
+
+                // PREVIEW LOKAL (LANGSUNG DI CURRENT-PHOTO)
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const currentPhoto = document.getElementById('current-photo');
@@ -944,8 +910,110 @@
                     .then(data => {
                         if (data.success) {
                             document.getElementById('temp_photo').value = data.filename;
+
+                            // HAPUS LOADING, TAPI PREVIEW SUDAH ADA DI CURRENT-PHOTO
+                            previewContainer.innerHTML = '';
                         }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        previewContainer.innerHTML = `<p class="text-sm text-red-600">Gagal upload. Coba lagi.</p>`;
                     });
+            });
+
+            // FUNGSI REMOVE TEMP PHOTO
+            function removeTempPhoto() {
+                const tempId = document.getElementById('temp_photo').value;
+                if (tempId) {
+                    fetch('{{ route('delete.temp') }}', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            filename: tempId
+                        })
+                    });
+                }
+                document.getElementById('photo-preview').innerHTML = '';
+                document.getElementById('house_photo').value = '';
+                document.getElementById('temp_photo').value = '';
+            }
+        </script>
+        <script>
+            // ============================================
+            // DEPENDENT DROPDOWN KELURAHAN -> RT/RW DENGAN LOADER
+            // ============================================
+            document.getElementById('kelurahan_id').addEventListener('change', function() {
+                const kelurahanId = this.value;
+                const rtRwSelect = document.getElementById('rt_rw_id');
+
+                // TAMPILKAN LOADING DI DROPDOWN
+                rtRwSelect.innerHTML = '<option value="">Loading RT/RW...</option>';
+                rtRwSelect.disabled = true;
+
+                if (kelurahanId) {
+                    fetch(`/get-rt-by-kelurahan/${kelurahanId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            // HAPUS LOADING, TAMPILKAN DATA
+                            rtRwSelect.innerHTML = '<option value="">--- Pilih RT/RW ---</option>';
+
+                            data.forEach(item => {
+                                const option = document.createElement('option');
+                                option.value = item.id;
+                                option.textContent = `[${item.kode_sls}] RT ${item.rt} / RW ${item.rw}`;
+                                rtRwSelect.appendChild(option);
+                            });
+
+                            rtRwSelect.disabled = false;
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            rtRwSelect.innerHTML = '<option value="">Gagal memuat data</option>';
+                            rtRwSelect.disabled = false;
+                        });
+                } else {
+                    // KALAU KELURAHAN KOSONG
+                    rtRwSelect.innerHTML = '<option value="">--- Pilih RT/RW ---</option>';
+                    rtRwSelect.disabled = false;
+                }
+            });
+
+            document.addEventListener('DOMContentLoaded', function() {
+
+                const kelurahanSelect = document.getElementById('kelurahan_id');
+                const rtRwSelect = document.getElementById('rt_rw_id');
+
+                const selectedKelurahan = "{{ old('kelurahan_id', $family->kelurahan_id ?? '') }}";
+                const selectedRtRw = "{{ old('rt_rw_id', $family->rt_rw_id ?? '') }}";
+
+                if (selectedKelurahan) {
+
+                    fetch(`/get-rt-by-kelurahan/${selectedKelurahan}`)
+                        .then(response => response.json())
+                        .then(data => {
+
+                            rtRwSelect.innerHTML = '<option value="">--- Pilih RT/RW ---</option>';
+
+                            data.forEach(item => {
+
+                                const option = document.createElement('option');
+                                option.value = item.id;
+                                option.textContent = `[${item.kode_sls}] RT ${item.rt} / RW ${item.rw}`;
+
+                                if (item.id == selectedRtRw) {
+                                    option.selected = true;
+                                }
+
+                                rtRwSelect.appendChild(option);
+                            });
+
+                        });
+
+                }
+
             });
         </script>
         <script src="https://cdn.jsdelivr.net/npm/flowbite@4.0.1/dist/flowbite.min.js"></script>
