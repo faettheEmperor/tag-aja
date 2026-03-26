@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
         $kelTanjungPermai = Kelurahan::where('nama', 'TANJUNG PERMAI')->first();
 
         // ===========================================
-        // ADMIN BPS (SUDAH ADA)
+        // ADMIN BPS
         // ===========================================
         $admins = [
             ['name' => 'Nur Ihklas, SST, M.Ec.Dev', 'email' => 'nur.ikhlas@bps.go.id'],
@@ -48,12 +48,13 @@ class DatabaseSeeder extends Seeder
         }
 
         // ===========================================
-        // SUPERVISOR (DARI DATA)
+        // SUPERVISOR
         // ===========================================
         $supervisors = [
             // Teluk Lobam
             ['name' => 'Alex Triyono', 'email' => 'alexferguson183@gmail.com', 'kelurahan' => $kelTelukLobam],
             ['name' => 'Fuat Susanto', 'email' => 'susantofuat@gmail.com', 'kelurahan' => $kelTelukLobam],
+            // Tanjung Permai
             ['name' => 'Noficandra', 'email' => 'noficandra4@gmail.com', 'kelurahan' => $kelTanjungPermai],
             ['name' => 'Abri Hasibuan', 'email' => 'apri24041981@gmail.com', 'kelurahan' => $kelTanjungPermai],
             ['name' => 'Heni Ismiyati', 'email' => 'ismiheni92@gmail.com', 'kelurahan' => $kelTanjungPermai],
@@ -81,64 +82,105 @@ class DatabaseSeeder extends Seeder
         }
 
         // ===========================================
-        // PETUGAS (AGEN STATISTIK & KETUA RT)
+        // PETUGAS (SEMUA)
         // ===========================================
-        $petugas = [
-            // ===== TELUK LOBAM =====
-            ['name' => 'Muhammad Rauf Amrullah', 'email' => 'rauf.amrullah1@gmail.com', 'kelurahan' => $kelTelukLobam, 'rt' => null],
-            ['name' => 'Bambang Supriyadi', 'email' => 'bambangsupriyadi1221@gmail.com', 'kelurahan' => $kelTelukLobam, 'rt' => null],
-            ['name' => 'M. Ismeth Sani', 'email' => 'tugaskls12xpa@gmail.com', 'kelurahan' => $kelTelukLobam, 'rt' => null],
-            ['name' => 'Dhea Amelia Safitri', 'email' => 'meliasftr285@gmail.com', 'kelurahan' => $kelTelukLobam, 'rt' => null],
-            ['name' => 'Nadwi Kamelia', 'email' => 'nadwikamelia77@gmail.com', 'kelurahan' => $kelTelukLobam, 'rt' => null],
-            ['name' => 'Baqiyyaa Kharismatul Latiifah', 'email' => 'baqiyyaaklatiifah28@gmail.com', 'kelurahan' => $kelTelukLobam, 'rt' => null],
-            ['name' => 'Faradilla Aisyahfitri', 'email' => 'faradilla.aisyahfitri20@gmail.com', 'kelurahan' => $kelTelukLobam, 'rt' => null],
-            ['name' => 'Salsabila', 'email' => 'a2732845@gmail.com', 'kelurahan' => $kelTelukLobam, 'rt' => null],
-            ['name' => 'Ahmad Fajar Supriyanto', 'email' => 'ahmadfajarsupriyanto@gmail.com', 'kelurahan' => $kelTelukLobam, 'rt' => null],
-            ['name' => 'Purwanto', 'email' => 'purwantopower1975@gmail.com', 'kelurahan' => $kelTelukLobam, 'rt' => '003'],
-            ['name' => 'Ahmad Rizal Nasution', 'email' => 'ahmadrizalnasution664@gmail.com', 'kelurahan' => $kelTelukLobam, 'rt' => null, 'note' => 'Ketua RW 007'],
-            ['name' => 'Rustamaji', 'email' => 'rustamajisukses@gmail.com', 'kelurahan' => $kelTelukLobam, 'rt' => null, 'note' => 'Ketua RW 001'],
-            ['name' => 'Sukur', 'email' => 'sukurtiens@gmail.com', 'kelurahan' => $kelTelukLobam, 'rt' => '001', 'rw' => '006'],
-            ['name' => 'Buyung Azril', 'email' => 'buyungn508@gmail.com', 'kelurahan' => $kelTelukLobam, 'rt' => null, 'note' => 'Ketua RW 002'],
-            ['name' => 'Neldawati', 'email' => 'neldaw941@gmail.com', 'kelurahan' => $kelTelukLobam, 'rt' => '003', 'note' => 'Ketua RT 003'],
-            ['name' => 'Anhar', 'email' => 'anhar201074@gmail.com', 'kelurahan' => $kelTelukLobam, 'rt' => '001', 'rw' => '001'],
-            ['name' => 'Matsarip', 'email' => 'matsarip208@gmail.com', 'kelurahan' => $kelTelukLobam, 'rt' => '001', 'note' => 'Ketua RT 001'],
-            ['name' => 'Muhammad Zacky Brianno', 'email' => 'zackybrian92@gmail.com', 'kelurahan' => $kelTelukLobam, 'rt' => null],
-            ['name' => 'Syarifudin Ahmad Jamil Rambe', 'email' => 'anggamad63@gmail.com', 'kelurahan' => $kelTelukLobam, 'rt' => null],
-            ['name' => 'Rohman', 'email' => 'aarohman1969@gmail.com', 'kelurahan' => $kelTelukLobam, 'rt' => '002', 'note' => 'Ketua RT 002'],
-            ['name' => 'Katty Talsia Ong', 'email' => 'kattytalsia03@gmail.com', 'kelurahan' => $kelTelukLobam, 'rt' => null],
-            
-            // ===== TANJUNG PERMAI =====
-            ['name' => 'Budianto', 'email' => 'budianto.permai@gmail.com', 'kelurahan' => $kelTanjungPermai, 'rt' => '003', 'rw' => '001', 'note' => 'Ketua RT 003 RW 001'],
-            ['name' => 'Baharuzzaman', 'email' => 'zaman.lobam@gmail.com', 'kelurahan' => $kelTanjungPermai, 'rt' => '004', 'rw' => '002'],
-            ['name' => 'Legiono', 'email' => 'legiono0207@gmail.com', 'kelurahan' => $kelTanjungPermai, 'rt' => null, 'note' => 'Ketua RW 003'],
-            ['name' => 'Usman', 'email' => 'usm963459@gmail.com', 'kelurahan' => $kelTanjungPermai, 'rt' => '003', 'rw' => '003'],
-            ['name' => 'Alfidra Zanades', 'email' => 'alfidrazanades@gmail.com', 'kelurahan' => $kelTanjungPermai, 'rt' => '005', 'rw' => '003'],
-            ['name' => 'Mhd Afrizon S', 'email' => 'afrizonzon914@gmail.com', 'kelurahan' => $kelTanjungPermai, 'rt' => null, 'note' => 'RW 002'],
-            ['name' => 'Doni Sutrana', 'email' => 'donisutrana36@gmail.com', 'kelurahan' => $kelTanjungPermai, 'rt' => '003'],
-            ['name' => 'Imam Edi Raharjo', 'email' => 'zakiyahnurul536@gmail.com', 'kelurahan' => $kelTanjungPermai, 'rt' => null],
-            ['name' => 'Agusmar', 'email' => 'agusmar780@gmail.com', 'kelurahan' => $kelTanjungPermai, 'rt' => '001', 'rw' => '001'],
-            ['name' => 'Suharno', 'email' => 'suharno6622@gmail.com', 'kelurahan' => $kelTanjungPermai, 'rt' => '002', 'rw' => '001'],
-            ['name' => 'Muhlasin', 'email' => 'mukhlasin513@gmail.com', 'kelurahan' => $kelTanjungPermai, 'rt' => '003', 'rw' => '002'],
-            ['name' => 'Lilik Masruroh', 'email' => 'lilikmasrura@gmail.com', 'kelurahan' => $kelTanjungPermai, 'rt' => '004'],
-            ['name' => 'Zulkarnain', 'email' => 'jariszul24@gmail.com', 'kelurahan' => $kelTanjungPermai, 'rt' => '001'],
-            ['name' => 'Sukarno', 'email' => 'rtnano354@gmail.com', 'kelurahan' => $kelTanjungPermai, 'rt' => '004'],
-            ['name' => 'Jhon Masgon Saragih', 'email' => 'rtjhonsaragih@gmail.com', 'kelurahan' => $kelTanjungPermai, 'rt' => '002', 'rw' => '002'],
+        
+        // Teluk Lobam
+        $petugasTelukLobam = [
+            ['name' => 'Muhammad Rauf Amrullah', 'email' => 'rauf.amrullah1@gmail.com'],
+            ['name' => 'Bambang Supriyadi', 'email' => 'bambangsupriyadi1221@gmail.com'],
+            ['name' => 'M. Ismeth Sani', 'email' => 'tugaskls12xpa@gmail.com'],
+            ['name' => 'Dhea Amelia Safitri', 'email' => 'meliasftr285@gmail.com'],
+            ['name' => 'Nadwi Kamelia', 'email' => 'nadwikamelia77@gmail.com'],
+            ['name' => 'Baqiyyaa Kharismatul Latiifah', 'email' => 'baqiyyaaklatiifah28@gmail.com'],
+            ['name' => 'Faradilla Aisyahfitri', 'email' => 'faradilla.aisyahfitri20@gmail.com'],
+            ['name' => 'Salsabila', 'email' => 'a2732845@gmail.com'],
+            ['name' => 'Ahmad Fajar Supriyanto', 'email' => 'ahmadfajarsupriyanto@gmail.com'],
+            ['name' => 'Muhammad Zacky Brianno', 'email' => 'zackybrian92@gmail.com'],
+            ['name' => 'Syarifudin Ahmad Jamil Rambe', 'email' => 'anggamad63@gmail.com'],
+            ['name' => 'Katty Talsia Ong', 'email' => 'kattytalsia03@gmail.com'],
+            // Ketua RT/RW Teluk Lobam
+            ['name' => 'Purwanto', 'email' => 'purwantopower1975@gmail.com', 'rt' => '003', 'rw' => '001'],
+            ['name' => 'Ahmad Rizal Nasution', 'email' => 'ahmadrizalnasution664@gmail.com', 'note' => 'Ketua RW 007'],
+            ['name' => 'Rustamaji', 'email' => 'rustamajisukses@gmail.com', 'note' => 'Ketua RW 001'],
+            ['name' => 'Sukur', 'email' => 'sukurtiens@gmail.com', 'rt' => '001', 'rw' => '006'],
+            ['name' => 'Buyung Azril', 'email' => 'buyungn508@gmail.com', 'note' => 'Ketua RW 002'],
+            ['name' => 'Neldawati', 'email' => 'neldaw941@gmail.com', 'rt' => '003', 'rw' => '001'],
+            ['name' => 'Anhar', 'email' => 'anhar201074@gmail.com', 'rt' => '001', 'rw' => '001'],
+            ['name' => 'Matsarip', 'email' => 'matsarip208@gmail.com', 'rt' => '001', 'rw' => '001'],
+            ['name' => 'Rohman', 'email' => 'aarohman1969@gmail.com', 'rt' => '002', 'rw' => '001'],
         ];
 
-        foreach ($petugas as $p) {
-            // Cari ID RT berdasarkan data yang diberikan
-            $rtRwId = null;
-            if (isset($p['rt']) && $p['rt']) {
-                $rw = $p['rw'] ?? '001';
-                $rtRw = RtRw::where('kelurahan_id', $p['kelurahan']->id)
-                    ->where('rt', str_pad($p['rt'], 3, '0', STR_PAD_LEFT))
-                    ->where('rw', str_pad($rw, 3, '0', STR_PAD_LEFT))
-                    ->first();
-                if ($rtRw) {
-                    $rtRwId = $rtRw->id;
-                }
-            }
+        // Tanjung Permai
+        $petugasTanjungPermai = [
+            ['name' => 'Budianto', 'email' => 'budianto.permai@gmail.com', 'rt' => '003', 'rw' => '001'],
+            ['name' => 'Baharuzzaman', 'email' => 'zaman.lobam@gmail.com', 'rt' => '004', 'rw' => '002'],
+            ['name' => 'Legiono', 'email' => 'legiono0207@gmail.com', 'note' => 'Ketua RW 003'],
+            ['name' => 'Usman', 'email' => 'usm963459@gmail.com', 'rt' => '003', 'rw' => '003'],
+            ['name' => 'Alfidra Zanades', 'email' => 'alfidrazanades@gmail.com', 'rt' => '005', 'rw' => '003'],
+            ['name' => 'Mhd Afrizon S', 'email' => 'afrizonzon914@gmail.com', 'note' => 'RW 002'],
+            ['name' => 'Doni Sutrana', 'email' => 'donisutrana36@gmail.com', 'rt' => '003', 'rw' => '001'],
+            ['name' => 'Imam Edi Raharjo', 'email' => 'zakiyahnurul536@gmail.com'],
+            ['name' => 'Agusmar', 'email' => 'agusmar780@gmail.com', 'rt' => '001', 'rw' => '001'],
+            ['name' => 'Suharno', 'email' => 'suharno6622@gmail.com', 'rt' => '002', 'rw' => '001'],
+            ['name' => 'Muhlasin', 'email' => 'mukhlasin513@gmail.com', 'rt' => '003', 'rw' => '002'],
+            ['name' => 'Lilik Masruroh', 'email' => 'lilikmasrura@gmail.com', 'rt' => '004', 'rw' => '001'],
+            ['name' => 'Zulkarnain', 'email' => 'jariszul24@gmail.com', 'rt' => '001', 'rw' => '001'],
+            ['name' => 'Sukarno', 'email' => 'rtnano354@gmail.com', 'rt' => '004', 'rw' => '001'],
+            ['name' => 'Jhon Masgon Saragih', 'email' => 'rtjhonsaragih@gmail.com', 'rt' => '002', 'rw' => '002'],
+            ['name' => 'Suwarni', 'email' => 'sajasuwarni172@gmail.com', 'rt' => '004', 'rw' => '001'],
+        ];
 
+        // Tanjung Uban Kota
+        $petugasTanjungUban = [
+            // Agen Pojok & Mahasiswa
+            ['name' => 'Rendy Syahputra', 'email' => 'rendygufasyahputra@gmail.com'],
+            ['name' => 'Giska Fitriani', 'email' => 'giskafitriani10@gmail.com'],
+            // Ketua RT/RW Tanjung Uban
+            ['name' => 'Eddy Soesanto', 'email' => 'esoesanto16@gmail.com', 'note' => 'Ketua RW 03'],
+            ['name' => 'Hidayat', 'email' => 'hidayat65709@gmail.com', 'note' => 'Ketua RW 01'],
+            ['name' => 'Rachmad Sanusi', 'email' => 'sanusi.rachmad.08@gmail.com', 'rt' => '001', 'rw' => '007'],
+            ['name' => 'Anjas Asmara', 'email' => 'anjasasmara2299@gmail.com', 'rt' => '004', 'rw' => '001'],
+            ['name' => 'Elvira Andriani', 'email' => 'elvirandriani@gmail.com', 'rt' => '002', 'rw' => '003'],
+            ['name' => 'Eko Sukarelawanto', 'email' => 'ekosukarelawanto@gmail.com', 'note' => 'Ketua RW 09'],
+            ['name' => 'Rahimah', 'email' => 'jaluaqsa124@gmail.com', 'rt' => '004', 'rw' => '002'],
+            ['name' => 'Acin', 'email' => 'ekinsura2017@gmail.com', 'rt' => '001', 'rw' => '001'],
+            ['name' => 'Defrizal', 'email' => 'defrizal5373@gmail.com', 'rt' => '001', 'rw' => '005'],
+            ['name' => 'Muhammad Daud', 'email' => 'virahardapuspita3390@gmail.com', 'rt' => '003', 'rw' => '001'],
+            ['name' => 'Suhartoyo', 'email' => 'suhartoyo1511@gmail.com', 'rt' => '002', 'rw' => '002'],
+            ['name' => 'Rudi Optiadi', 'email' => 'optiadirudi@gmail.com', 'note' => 'Ketua RW 004'],
+            ['name' => 'Yudi Arfiandi', 'email' => 'wwawanet@gmail.com', 'rt' => '001', 'rw' => '001'],
+            ['name' => 'Hasmiati', 'email' => 'atik85496@gmail.com', 'rt' => '001', 'rw' => '004'],
+            ['name' => 'Kusmahandi', 'email' => 'kusmahandi@gmail.com', 'rt' => '001', 'rw' => '001'],
+            ['name' => 'Muhammad Rustam', 'email' => 'pulaubintan132@gmail.com', 'rt' => '004', 'rw' => '004'],
+            ['name' => 'Ernawati', 'email' => 'ernaw15091974@gmail.com', 'rt' => '001', 'rw' => '001'],
+            ['name' => 'Taufik Ali Akbar', 'email' => 'taufik.akbar.1977@gmail.com', 'rt' => '002', 'rw' => '001'],
+            ['name' => 'Mardi Siswoyo', 'email' => 'siswoyomardi46@gmail.com', 'rt' => '002', 'rw' => '004'],
+            ['name' => 'Jumiati', 'email' => 'jumiatibeny@gmail.com', 'rt' => '002', 'rw' => '007'],
+            ['name' => 'Desmawati Suriani Simanjuntak', 'email' => 'echsanm6@gmail.com', 'rt' => '003', 'rw' => '001'],
+            ['name' => 'Syafruddin', 'email' => 'syafabie555@gmail.com', 'note' => 'RW 02'],
+            ['name' => 'Jufri', 'email' => 'jufri0301@gmail.com', 'note' => 'RW'],
+            ['name' => 'Agus Mulyadi', 'email' => 'agusmulyad289@gmail.com', 'rt' => '001', 'rw' => '001'],
+            ['name' => 'Nur Soleman', 'email' => 'mancho2574@gmail.com', 'rt' => '001', 'rw' => '001'],
+            ['name' => 'Abdul Rahman', 'email' => 'aabdulrahman0272@gmail.com', 'rt' => '003', 'rw' => '001'],
+            ['name' => 'Suhatno', 'email' => 's2884435@gmail.com', 'rt' => '002', 'rw' => '009'],
+            ['name' => 'Tedi Seno Putra', 'email' => 'putrasenotedi@gmail.com', 'rt' => '003', 'rw' => '001'],
+            ['name' => 'Fadly', 'email' => 'judexs.fadly@gmail.com', 'rt' => '002', 'rw' => '001'],
+        ];
+
+        // Fungsi helper untuk mencari RT RW
+        function getRtRwId($kelurahan, $rt, $rw = '001') {
+            if (!$rt) return null;
+            $rtRw = RtRw::where('kelurahan_id', $kelurahan->id)
+                ->where('rt', str_pad($rt, 3, '0', STR_PAD_LEFT))
+                ->where('rw', str_pad($rw, 3, '0', STR_PAD_LEFT))
+                ->first();
+            return $rtRw ? $rtRw->id : null;
+        }
+
+        // Insert Teluk Lobam
+        foreach ($petugasTelukLobam as $p) {
+            $rtRwId = isset($p['rt']) ? getRtRwId($kelTelukLobam, $p['rt'], $p['rw'] ?? '001') : null;
             User::firstOrCreate(
                 ['email' => $p['email']],
                 [
@@ -146,7 +188,43 @@ class DatabaseSeeder extends Seeder
                     'email_verified_at' => now(),
                     'password' => Hash::make('password'),
                     'role' => 'petugas',
-                    'kelurahan_id' => $p['kelurahan']->id,
+                    'kelurahan_id' => $kelTelukLobam->id,
+                    'rt_rw_id' => $rtRwId,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
+        }
+
+        // Insert Tanjung Permai
+        foreach ($petugasTanjungPermai as $p) {
+            $rtRwId = isset($p['rt']) ? getRtRwId($kelTanjungPermai, $p['rt'], $p['rw'] ?? '001') : null;
+            User::firstOrCreate(
+                ['email' => $p['email']],
+                [
+                    'name' => $p['name'],
+                    'email_verified_at' => now(),
+                    'password' => Hash::make('password'),
+                    'role' => 'petugas',
+                    'kelurahan_id' => $kelTanjungPermai->id,
+                    'rt_rw_id' => $rtRwId,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
+        }
+
+        // Insert Tanjung Uban
+        foreach ($petugasTanjungUban as $p) {
+            $rtRwId = isset($p['rt']) ? getRtRwId($kelTanjungUban, $p['rt'], $p['rw'] ?? '001') : null;
+            User::firstOrCreate(
+                ['email' => $p['email']],
+                [
+                    'name' => $p['name'],
+                    'email_verified_at' => now(),
+                    'password' => Hash::make('password'),
+                    'role' => 'petugas',
+                    'kelurahan_id' => $kelTanjungUban->id,
                     'rt_rw_id' => $rtRwId,
                     'created_at' => now(),
                     'updated_at' => now(),
@@ -157,6 +235,8 @@ class DatabaseSeeder extends Seeder
         $this->command->info('Seeder berhasil dijalankan!');
         $this->command->info('Total Admin: ' . count($admins));
         $this->command->info('Total Supervisor: ' . count($supervisors));
-        $this->command->info('Total Petugas: ' . count($petugas));
+        $this->command->info('Total Petugas Teluk Lobam: ' . count($petugasTelukLobam));
+        $this->command->info('Total Petugas Tanjung Permai: ' . count($petugasTanjungPermai));
+        $this->command->info('Total Petugas Tanjung Uban: ' . count($petugasTanjungUban));
     }
 }
