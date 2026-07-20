@@ -15,7 +15,7 @@ use App\Models\Kelurahan;
 
 class FamilyController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
 
@@ -30,8 +30,61 @@ class FamilyController extends Controller
         }
         // admin: tanpa filter (semua data)
 
-        // EKSEKUSI QUERY
-        $families = $query->get();
+        // FILTER PENCARIAN
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('number_kk', 'like', "%{$search}%")
+                  ->orWhere('ktp_address', 'like', "%{$search}%")
+                  ->orWhereHas('members', function ($mq) use ($search) {
+                      $mq->where('full_name', 'like', "%{$search}%")
+                        ->orWhere('nik', 'like', "%{$search}%");
+                  })
+                  ->orWhereHas('kelurahan', function ($kq) use ($search) {
+                      $kq->where('nama', 'like', "%{$search}%");
+                  })
+                  ->orWhereHas('rtRw', function ($rq) use ($search) {
+                      $rq->where('rt', 'like', "%{$search}%")
+                        ->orWhere('rw', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        // FILTER PENGURUTAN (SORT)
+        if ($request->filled('sort')) {
+            $sort = $request->input('sort');
+            switch ($sort) {
+                case 'PKH':
+                    $query->orderByRaw("FIELD(pkh, 'Ya', 'Tidak')");
+                    break;
+                case 'BPNT':
+                    $query->orderByRaw("FIELD(bpnt, 'Ya', 'Tidak')");
+                    break;
+                case 'BLT Lansia':
+                    $query->orderByRaw("FIELD(blt_elderly, 'Ya', 'Tidak')");
+                    break;
+                case 'BLT Desa':
+                    $query->orderByRaw("FIELD(blt_village, 'Ya', 'Tidak')");
+                    break;
+                case 'Jumlah Anggota Keluarga':
+                    $query->orderBy('number_of_family_member', 'desc');
+                    break;
+                case 'RT/RW':
+                    $query->leftJoin('rt_rws', 'families.rt_rw_id', '=', 'rt_rws.id')
+                          ->orderBy('rt_rws.rt', 'asc')
+                          ->orderBy('rt_rws.rw', 'asc')
+                          ->select('families.*');
+                    break;
+                default:
+                    $query->latest('families.created_at');
+                    break;
+            }
+        } else {
+            $query->latest('families.created_at');
+        }
+
+        // EKSEKUSI QUERY DENGAN PAGINASI (10 PER HALAMAN)
+        $families = $query->paginate(10)->withQueryString();
 
         // KIRIM KE VIEW
         return view('families.index', compact('families'));

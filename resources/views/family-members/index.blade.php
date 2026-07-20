@@ -30,7 +30,7 @@
                         <!-- Heading & Filters -->
                         <div class="mb-4 items-end justify-between space-y-4 sm:flex sm:space-y-0 md:mb-8">
                             <div>
-                                <form class="lg:w-96 max-w-full sm:w-72 mx-auto">
+                                <form class="lg:w-96 max-w-full sm:w-72 mx-auto" method="GET" action="{{ route('family-member.index') }}">
                                     <label for="search"
                                         class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Cari</label>
                                     <div class="relative">
@@ -43,9 +43,9 @@
                                                     d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                                             </svg>
                                         </div>
-                                        <input name="search" type="text" id="search"
+                                        <input name="search" type="text" id="search" value="{{ request('search') }}"
                                             class="block w-full p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                            placeholder="Pencarian" required />
+                                            placeholder="Cari Nama / NIK (tekan Enter)" />
                                     </div>
                                 </form>
                             </div>
@@ -79,13 +79,15 @@
                                 </button>
                             </div>
                         </div>
-                        <div id="emptyState" class="hidden card bg-gray-50 p-4 rounded-lg text-center justify-center">
-                            <h2 class="text-lg font-semibold text-gray-700">Belum ada data</h2>
-                            <p class="text-gray-500">Silakan tambahkan keluarga.</p>
-                        </div>
-                        <div class="shopContainer mb-4 grid gap-4 sm:grid-cols-2 md:mb-8 lg:grid-cols-3 xl:grid-cols-3"
-                            id="family-members-container">
-                            @foreach ($members as $member)
+                        @if ($members->isEmpty())
+                            <div id="emptyState" class="card bg-gray-50 p-8 rounded-lg text-center justify-center dark:bg-gray-800">
+                                <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-300">Belum ada data</h2>
+                                <p class="text-gray-500 dark:text-gray-400">Tidak ada data anggota keluarga yang ditemukan.</p>
+                            </div>
+                        @else
+                            <div class="shopContainer mb-4 grid gap-4 sm:grid-cols-2 md:mb-8 lg:grid-cols-3 xl:grid-cols-3"
+                                id="family-members-container">
+                                @foreach ($members as $member)
                                 <div
                                     class="member-item rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
                                     <div class="pt-6">
@@ -366,32 +368,12 @@
                                 </div>
                             @endforeach
                         </div>
-                        <div class="w-full text-center">
-
-                            <div class="flex flex-col items-center">
-                                <!-- Help text -->
-                                <span class="text-sm text-gray-700 dark:text-gray-400">
-                                    Showing <span id="startEntry"
-                                        class="font-semibold text-gray-900 dark:text-white"></span> to
-                                    <span id="endEntry" class="font-semibold text-gray-900 dark:text-white"></span>
-                                    of
-                                    <span id="totalEntries"
-                                        class="font-semibold text-gray-900 dark:text-white"></span> Entries
-                                </span>
-                                <!-- Buttons -->
-                                <div class="inline-flex mt-2 xs:mt-0">
-                                    <button id="prevBtn"
-                                        class="flex items-center justify-center px-3 h-8 text-sm font-medium text-white bg-gray-700 rounded-s hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                                        Prev
-                                    </button>
-                                    <button id="nextBtn"
-                                        class="flex items-center justify-center px-3 h-8 text-sm font-medium text-white bg-gray-700 border-0 border-s border-gray-700 rounded-e hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                                        Next
-                                    </button>
-                                </div>
+                        @endif
+                        @if ($members->hasPages())
+                            <div class="w-full mt-6">
+                                {{ $members->onEachSide(1)->links() }}
                             </div>
-
-                        </div>
+                        @endif
                     </div>
             </div>
             </section>
@@ -399,29 +381,6 @@
     </div>
     </div>
     @push('scrollreveal-index')
-        {{-- Pesan kosong --}}
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const shopContainer = document.getElementById('shopContainer'); // Wrapper untuk card
-                const emptyState = document.getElementById('emptyState'); // Div untuk pesan kosong
-                const shopItems = document.querySelectorAll('.member-item'); // Semua item tagging usaha
-
-                function checkEmptyState() {
-                    if (shopItems.length === 0) {
-                        // Tampilkan pesan kosong
-                        emptyState.classList.remove('hidden');
-                        shopContainer.style.display = 'none'; // Sembunyikan container utama
-                    } else {
-                        // Sembunyikan pesan kosong
-                        emptyState.classList.add('hidden');
-                    }
-                }
-
-                // Panggil fungsi checkEmptyState saat halaman dimuat
-                checkEmptyState();
-            });
-        </script>
-
         {{-- Scroll Reveal --}}
         <script>
             window.sr = ScrollReveal({
@@ -466,66 +425,6 @@
         </script>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                // Inisialisasi data untuk pagination
-                let currentPage = 1;
-                const itemsPerPage = 9; // Jumlah item per halaman
-                const shopItems = document.querySelectorAll('.member-item');
-                const totalItems = shopItems.length; // Total jumlah item yang ada
-                const totalPages = Math.max(1, Math.ceil(totalItems /
-                    itemsPerPage)); // Minimal 1 halaman, bahkan jika tidak ada data
-
-                // Fungsi untuk memperbarui tampilan item sesuai halaman
-                function updatePagination() {
-                    const start = (currentPage - 1) * itemsPerPage;
-                    const end = start + itemsPerPage;
-
-                    // Sembunyikan semua item terlebih dahulu
-                    shopItems.forEach(item => (item.style.display = 'none'));
-
-                    // Tampilkan item yang sesuai dengan halaman saat ini
-                    if (totalItems > 0) {
-                        for (let i = start; i < end && i < totalItems; i++) {
-                            shopItems[i].style.display = ''; // Menampilkan item
-                        }
-
-                        // Perbarui teks rentang item yang ditampilkan
-                        document.getElementById('startEntry').textContent = start + 1;
-                        document.getElementById('endEntry').textContent = Math.min(end, totalItems);
-                    } else {
-                        // Jika tidak ada item, tampilkan 0
-                        document.getElementById('startEntry').textContent = 0;
-                        document.getElementById('endEntry').textContent = 0;
-                    }
-
-                    document.getElementById('totalEntries').textContent = totalItems;
-
-                    // Perbarui status tombol navigasi
-                    document.getElementById('prevBtn').disabled = currentPage === 1;
-                    document.getElementById('nextBtn').disabled = currentPage === totalPages || totalItems === 0;
-                }
-
-                // Fungsi untuk pindah ke halaman sebelumnya
-                document.getElementById('prevBtn').addEventListener('click', function() {
-                    if (currentPage > 1) {
-                        currentPage--;
-                        updatePagination();
-                    }
-                });
-
-                // Fungsi untuk pindah ke halaman berikutnya
-                document.getElementById('nextBtn').addEventListener('click', function() {
-                    if (currentPage < totalPages) {
-                        currentPage++;
-                        updatePagination();
-                    }
-                });
-
-                // Memulai pagination dengan menampilkan halaman pertama
-                updatePagination();
-            });
-        </script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
                 document.querySelectorAll('.deleteBtn').forEach(function(button) {
                     button.addEventListener('click', function() {
                         var familyId = this.getAttribute('data-family-id');
@@ -541,73 +440,6 @@
                         document.getElementById('popup-modal').classList.add('hidden');
                     });
                 });
-            });
-        </script>
-        <script>
-            // FUNGSI SEARCH
-            document.addEventListener('DOMContentLoaded', function() {
-                const searchInput = document.getElementById('search');
-                const cards = document.querySelectorAll('.member-item');
-                const container = document.getElementById('family-members-container');
-
-                if (!searchInput) {
-                    console.error('Search input tidak ditemukan!');
-                    return;
-                }
-
-                searchInput.addEventListener('input', function() {
-                    const searchTerm = this.value.toLowerCase().trim();
-
-                    cards.forEach(card => {
-                        // Ambil data dari card (sesuaikan dengan struktur HTML lo)
-                        const namaAnggota = card.querySelector('.text-lg.font-semibold')?.textContent
-                            .toLowerCase() || '';
-                        const statusKeluarga = card.querySelector('.table-row-group .text-gray-500')
-                            ?.textContent.toLowerCase() || '';
-
-                        // Cari semua teks di dalam card untuk pencarian umum
-                        const cardText = card.textContent.toLowerCase();
-
-                        // Cek apakah cocok dengan pencarian
-                        const matches =
-                            namaAnggota.includes(searchTerm) ||
-                            statusKeluarga.includes(searchTerm) ||
-                            cardText.includes(searchTerm);
-
-                        // Tampilkan atau sembunyikan card
-                        if (searchTerm === '' || matches) {
-                            card.style.display = ''; // tampilkan
-                        } else {
-                            card.style.display = 'none'; // sembunyikan
-                        }
-                    });
-
-                    // Cek apakah ada card yang tampil
-                    checkEmptySearch();
-                });
-
-                function checkEmptySearch() {
-                    // Hitung card yang tampil (style display bukan 'none')
-                    let visibleCount = 0;
-                    cards.forEach(card => {
-                        if (card.style.display !== 'none') {
-                            visibleCount++;
-                        }
-                    });
-
-                    // Hapus pesan kosong lama jika ada
-                    const oldMessage = document.getElementById('search-empty-message');
-                    if (oldMessage) oldMessage.remove();
-
-                    // Kalau tidak ada card yang tampil, tampilkan pesan
-                    if (visibleCount === 0 && cards.length > 0) {
-                        const emptyMessage = document.createElement('div');
-                        emptyMessage.id = 'search-empty-message';
-                        emptyMessage.className = 'col-span-full text-center py-8 text-gray-500';
-                        emptyMessage.textContent = 'Tidak ada data yang cocok dengan pencarian.';
-                        container.appendChild(emptyMessage);
-                    }
-                }
             });
         </script>
     @endpush

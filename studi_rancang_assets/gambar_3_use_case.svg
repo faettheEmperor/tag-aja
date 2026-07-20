@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 950 600" width="100%" height="100%">
+  <rect width="950" height="600" rx="15" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  
+  <!-- Title -->
+  <text x="475" y="40" font-family="'Outfit', 'Inter', sans-serif" font-size="22" font-weight="bold" fill="#0f172a" text-anchor="middle">Diagram Use Case Aplikasi Tag-Aja</text>
+  
+  <!-- System Boundary -->
+  <rect x="250" y="80" width="450" height="490" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+  <text x="475" y="105" font-family="sans-serif" font-size="15" font-weight="bold" fill="#6366f1" text-anchor="middle">Sistem Pendataan Terpadu Tag-Aja</text>
+  
+  <!-- Actor 1: Petugas Lapangan -->
+  <g transform="translate(80, 220)">
+    <circle cx="40" cy="30" r="15" fill="none" stroke="#0f172a" stroke-width="2.5"/>
+    <line x1="40" y1="45" x2="40" y2="90" stroke="#0f172a" stroke-width="2.5"/>
+    <line x1="15" y1="60" x2="65" y2="60" stroke="#0f172a" stroke-width="2.5"/>
+    <line x1="40" y1="90" x2="20" y2="130" stroke="#0f172a" stroke-width="2.5"/>
+    <line x1="40" y1="90" x2="60" y2="130" stroke="#0f172a" stroke-width="2.5"/>
+    <text x="40" y="160" font-family="sans-serif" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="middle">Petugas Lapangan</text>
+  </g>
+
+  <!-- Actor 2: Supervisor & Admin -->
+  <g transform="translate(830, 220)">
+    <circle cx="40" cy="30" r="15" fill="none" stroke="#0f172a" stroke-width="2.5"/>
+    <line x1="40" y1="45" x2="40" y2="90" stroke="#0f172a" stroke-width="2.5"/>
+    <line x1="15" y1="60" x2="65" y2="60" stroke="#0f172a" stroke-width="2.5"/>
+    <line x1="40" y1="90" x2="20" y2="130" stroke="#0f172a" stroke-width="2.5"/>
+    <line x1="40" y1="90" x2="60" y2="130" stroke="#0f172a" stroke-width="2.5"/>
+    <text x="40" y="160" font-family="sans-serif" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="middle">Supervisor / Admin</text>
+  </g>
+
+  <!-- Use Cases -->
+  <!-- UC1: Entri Data Keluarga -->
+  <g transform="translate(325, 120)">
+    <ellipse cx="150" cy="25" rx="120" ry="22" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
+    <text x="150" y="29" font-family="sans-serif" font-size="12" fill="#0369a1" text-anchor="middle">Melakukan Entri Data Keluarga</text>
+  </g>
+
+  <!-- UC2: Geotagging GPS -->
+  <g transform="translate(325, 180)">
+    <ellipse cx="150" cy="25" rx="120" ry="22" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
+    <text x="150" y="29" font-family="sans-serif" font-size="12" fill="#0369a1" text-anchor="middle">Mencatat Koordinat Rumah (GPS)</text>
+  </g>
+
+  <!-- UC3: Upload Foto Rumah -->
+  <g transform="translate(325, 240)">
+    <ellipse cx="150" cy="25" rx="120" ry="22" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
+    <text x="150" y="29" font-family="sans-serif" font-size="12" fill="#0369a1" text-anchor="middle">Mengunggah Foto Rumah</text>
+  </g>
+
+  <!-- UC4: Kelola Data Sendiri -->
+  <g transform="translate(325, 300)">
+    <ellipse cx="150" cy="25" rx="120" ry="22" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
+    <text x="150" y="29" font-family="sans-serif" font-size="12" fill="#0369a1" text-anchor="middle">Melihat &amp; Edit Data Pendataan</text>
+  </g>
+
+  <!-- UC5: Monitoring Wilayah -->
+  <g transform="translate(325, 360)">
+    <ellipse cx="150" cy="25" rx="120" ry="22" fill="#f5f3ff" stroke="#6366f1" stroke-width="1.5"/>
+    <text x="150" y="29" font-family="sans-serif" font-size="12" fill="#4f46e5" text-anchor="middle">Memonitor Statistik Kelurahan</text>
+  </g>
+
+  <!-- UC6: Ekspor CSV -->
+  <g transform="translate(325, 420)">
+    <ellipse cx="150" cy="25" rx="120" ry="22" fill="#f5f3ff" stroke="#6366f1" stroke-width="1.5"/>
+    <text x="150" y="29" font-family="sans-serif" font-size="12" fill="#4f46e5" text-anchor="middle">Mengekspor Data Terfilter (CSV)</text>
+  </g>
+
+  <!-- UC7: Manajemen Pengguna -->
+  <g transform="translate(325, 480)">
+    <ellipse cx="150" cy="25" rx="120" ry="22" fill="#f1f5f9" stroke="#475569" stroke-width="1.5"/>
+    <text x="150" y="29" font-family="sans-serif" font-size="12" fill="#334155" text-anchor="middle">Mengelola User &amp; Wilayah (Admin)</text>
+  </g>
+
+  <!-- Association Lines -->
+  <!-- Petugas to UC1, UC2, UC3, UC4 -->
+  <line x1="160" y1="280" x2="350" y2="142" stroke="#475569" stroke-width="1.5"/>
+  <line x1="160" y1="280" x2="350" y2="202" stroke="#475569" stroke-width="1.5"/>
+  <line x1="160" y1="280" x2="350" y2="262" stroke="#475569" stroke-width="1.5"/>
+  <line x1="160" y1="280" x2="350" y2="322" stroke="#475569" stroke-width="1.5"/>
+
+  <!-- Admin/SP to UC5, UC6, UC7 -->
+  <line x1="830" y1="280" x2="600" y2="382" stroke="#475569" stroke-width="1.5"/>
+  <line x1="830" y1="280" x2="600" y2="442" stroke="#475569" stroke-width="1.5"/>
+  <line x1="830" y1="280" x2="600" y2="502" stroke="#475569" stroke-width="1.5"/>
+</svg>

@@ -7,11 +7,11 @@ use Illuminate\Support\Facades\Auth;
 
 class FamilyMemberController extends Controller
 {
-    public function index()
+    public function index(\Illuminate\Http\Request $request)
     {
         $user = Auth::user();
 
-        $query = FamilyMember::with(['family.kelurahan', 'family.rtRw', 'family.creator']);
+        $query = FamilyMember::with(['family.kelurahan', 'family.rtRw', 'family.creator', 'family.members']);
 
         if ($user->role === 'petugas') {
             $query->whereHas('family', fn($q) => $q->where('created_by', $user->id));
@@ -20,7 +20,26 @@ class FamilyMemberController extends Controller
         }
         // admin: tanpa filter
 
-        $members = $query->get();
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('full_name', 'like', "%{$search}%")
+                  ->orWhere('nik', 'like', "%{$search}%")
+                  ->orWhere('status_in_family', 'like', "%{$search}%")
+                  ->orWhere('place_of_birth', 'like', "%{$search}%")
+                  ->orWhere('employment_status', 'like', "%{$search}%")
+                  ->orWhereHas('family', function ($fq) use ($search) {
+                      $fq->where('number_kk', 'like', "%{$search}%")
+                        ->orWhere('ktp_address', 'like', "%{$search}%")
+                        ->orWhereHas('rtRw', function ($rq) use ($search) {
+                            $rq->where('rt', 'like', "%{$search}%")
+                               ->orWhere('rw', 'like', "%{$search}%");
+                        });
+                  });
+            });
+        }
+
+        $members = $query->latest()->paginate(10)->withQueryString();
         return view('family-members.index', compact('members'));
     }
 
