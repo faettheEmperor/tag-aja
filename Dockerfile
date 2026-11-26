@@ -16,7 +16,7 @@ COPY . .
 RUN npm run build
 
 # Stage 2: Composer dependencies
-FROM serversideup/php:8.3-cli AS composer-builder
+FROM serversideup/php:8.3.37-cli AS composer-builder
 
 USER root
 
@@ -35,7 +35,7 @@ COPY . .
 RUN composer dump-autoload --optimize --no-dev
 
 # Stage 3: Production image
-FROM serversideup/php:8.3-fpm-nginx
+FROM serversideup/php:8.3.37-fpm-nginx
 
 ENV PHP_OPCACHE_ENABLE=1
 
@@ -58,5 +58,5 @@ RUN chown -R www-data:www-data /var/www/html \
 # Switch to www-data user
 USER www-data
 
-# Expose port (serversideup/php:8.3-fpm-nginx uses 8080 by default)
+# Expose port (serversideup/php:8.3.37-fpm-nginx uses 8080 by default)
 EXPOSE 8080
